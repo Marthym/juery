@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 
 public final class SchemaSample {
-    public static final Table<Record> NEWS = DSL.table("NEWS");
+    public static final Table<Record> NEWS = DSL.table(DSL.name("NEWS"));
     public static final Field<String> NEWS_ID = DSL.field(DSL.name("NEWS", "NEWS_ID"),
             SQLDataType.VARCHAR(12));
     public static final Field<String> NEWS_TITLE = DSL.field(DSL.name("NEWS", "NEWS_TITLE"),
@@ -19,6 +19,7 @@ public final class SchemaSample {
             SQLDataType.LOCALDATETIME(6).nullable(false));
 
     public static final Map<String, Field<?>> NEWS_PROPERTIES_MAPPING = Map.of(
+            "id", NEWS_ID,
             "title", NEWS_TITLE,
             "publication", NEWS_PUBLICATION
     );

@@ -26,8 +26,11 @@
 
         <junit.version>5.7.1</junit.version>
         <asserj.version>3.19.0</asserj.version>
+        <slf4j.version>1.7.30</slf4j.version>
+        <logback.version>1.2.3</logback.version>
 
         <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -77,6 +80,18 @@
                 <version>${asserj.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
+                <scope>test</scope>
+            </dependency>
 
         </dependencies>
     </dependencyManagement>
@@ -90,6 +105,7 @@
                     <version>${maven-compiler-plugin.version}</version>
                     <configuration>
                         <release>${maven.compiler.source}</release>
+                        <parameters>true</parameters>
                         <generatedSourcesDirectory>target/generated-sources</generatedSourcesDirectory>
                         <annotationProcessorPaths>
                             <path>
@@ -98,6 +114,31 @@
                                 <version>${lombok.version}</version>
                             </path>
                         </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                    <configuration>
+                        <argLine>
+                            --add-opens juery.api/fr.ght1pc9kc.juery.api=ALL-UNNAMED
+                            --add-opens juery.core/fr.ght1pc9kc.juery.core=ALL-UNNAMED
+                            --add-opens juery.core/fr.ght1pc9kc.juery.core.filter=ALL-UNNAMED
+                            --add-opens juery.jooq/fr.ght1pc9kc.juery.jooq.pagination=ALL-UNNAMED
+                            --add-opens juery.jooq/fr.ght1pc9kc.juery.jooq.filter=ALL-UNNAMED
+                            ${argLine}
+                        </argLine>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                    <configuration>
+                        <argLine>
+                            --illegal-access=permit
+                        </argLine>
                     </configuration>
                 </plugin>
             </plugins>
@@ -112,8 +153,9 @@
                 <sonar.organization>ght1pc9kc-fr</sonar.organization>
                 <sonar.host.url>https://sonarcloud.io</sonar.host.url>
                 <sonar.moduleKey>${project.groupId}:${project.artifactId}</sonar.moduleKey>
-                <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/../juery-jooq/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-                <sonar.junit.reportPaths>${project.basedir}/../target/jacoco.exec</sonar.junit.reportPaths>
+                <sonar.coverage.jacoco.xmlReportPaths>**/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+                <sonar.coverage.exclusions>fr/ght1pc9kc/juery/core/common/lang3/**/*</sonar.coverage.exclusions>
+                <sonar.exclusions>fr/ght1pc9kc/juery/core/common/lang3/**/*</sonar.exclusions>
 
                 <jacoco-maven-plugin.version>0.8.6</jacoco-maven-plugin.version>
             </properties>

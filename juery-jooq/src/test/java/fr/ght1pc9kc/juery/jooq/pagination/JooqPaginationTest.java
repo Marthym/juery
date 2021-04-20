@@ -4,7 +4,6 @@ import fr.ght1pc9kc.juery.api.PageRequest;
 import fr.ght1pc9kc.juery.api.pagination.Order;
 import fr.ght1pc9kc.juery.api.pagination.Sort;
 import org.assertj.core.api.Assertions;
-import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.Select;
@@ -13,7 +12,6 @@ import org.jooq.impl.DSL;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
 import static fr.ght1pc9kc.juery.jooq.database.SchemaSample.*;
 
@@ -27,7 +25,7 @@ class JooqPaginationTest {
                 .build();
         Select<Record1<Integer>> actual = JooqPagination.apply(pageRequest, DSL.selectCount().from(NEWS));
         Assertions.assertThat(actual.getSQL(ParamType.INLINED))
-                .isEqualTo("select count(*) from \"PUBLIC\".\"NEWS\" limit 10 offset 50");
+                .isEqualTo("select count(*) from \"NEWS\" limit 10 offset 50");
     }
 
     @Test
@@ -43,9 +41,9 @@ class JooqPaginationTest {
         Select<Record2<String, LocalDateTime>> actual = JooqPagination.apply(
                 pageRequest, NEWS_PROPERTIES_MAPPING, DSL.select(NEWS_TITLE, NEWS_PUBLICATION).from(NEWS));
         Assertions.assertThat(actual.getSQL(ParamType.INLINED))
-                .isEqualTo("select \"PUBLIC\".\"NEWS\".\"NEWS_TITLE\", \"PUBLIC\".\"NEWS\".\"NEWS_PUBLICATION\" " +
-                        "from \"PUBLIC\".\"NEWS\" " +
-                        "order by \"PUBLIC\".\"NEWS\".\"NEWS_PUBLICATION\" asc, " +
-                        "\"PUBLIC\".\"NEWS\".\"NEWS_TITLE\" desc");
+                .isEqualTo("select \"NEWS\".\"NEWS_TITLE\", \"NEWS\".\"NEWS_PUBLICATION\" " +
+                        "from \"NEWS\" " +
+                        "order by \"NEWS\".\"NEWS_PUBLICATION\" asc, " +
+                        "\"NEWS\".\"NEWS_TITLE\" desc");
     }
 }
