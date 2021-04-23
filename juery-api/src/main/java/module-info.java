@@ -1,5 +1,6 @@
 module juery.api {
     requires static lombok;
+    requires static java.desktop;
     requires static org.jetbrains.annotations;
 
     exports fr.ght1pc9kc.juery.api;

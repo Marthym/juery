@@ -121,13 +121,13 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven-surefire-plugin.version}</version>
                     <configuration>
+                        <argLine>${argLine}</argLine>
                         <argLine>
                             --add-opens juery.api/fr.ght1pc9kc.juery.api=ALL-UNNAMED
                             --add-opens juery.core/fr.ght1pc9kc.juery.core=ALL-UNNAMED
                             --add-opens juery.core/fr.ght1pc9kc.juery.core.filter=ALL-UNNAMED
                             --add-opens juery.jooq/fr.ght1pc9kc.juery.jooq.pagination=ALL-UNNAMED
                             --add-opens juery.jooq/fr.ght1pc9kc.juery.jooq.filter=ALL-UNNAMED
-                            ${argLine}
                         </argLine>
                     </configuration>
                 </plugin>
@@ -149,13 +149,13 @@
         <profile>
             <id>sonar</id>
             <properties>
-                <sonar.projectKey>ght1pc9kc-fr_juery</sonar.projectKey>
+                <sonar.projectKey>Marthym_juery</sonar.projectKey>
                 <sonar.organization>ght1pc9kc-fr</sonar.organization>
                 <sonar.host.url>https://sonarcloud.io</sonar.host.url>
                 <sonar.moduleKey>${project.groupId}:${project.artifactId}</sonar.moduleKey>
                 <sonar.coverage.jacoco.xmlReportPaths>**/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-                <sonar.coverage.exclusions>fr/ght1pc9kc/juery/core/common/lang3/**/*</sonar.coverage.exclusions>
-                <sonar.exclusions>fr/ght1pc9kc/juery/core/common/lang3/**/*</sonar.exclusions>
+                <sonar.coverage.exclusions>**/common/lang3/**</sonar.coverage.exclusions>
+                <sonar.exclusions>**/common/lang3/**</sonar.exclusions>
 
                 <jacoco-maven-plugin.version>0.8.6</jacoco-maven-plugin.version>
             </properties>
