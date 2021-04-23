@@ -121,7 +121,6 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven-surefire-plugin.version}</version>
                     <configuration>
-                        <argLine>${argLine}</argLine>
                         <argLine>
                             --add-opens juery.api/fr.ght1pc9kc.juery.api=ALL-UNNAMED
                             --add-opens juery.core/fr.ght1pc9kc.juery.core=ALL-UNNAMED
@@ -156,6 +155,8 @@
                 <sonar.coverage.jacoco.xmlReportPaths>**/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
                 <sonar.coverage.exclusions>**/common/lang3/**</sonar.coverage.exclusions>
                 <sonar.exclusions>**/common/lang3/**</sonar.exclusions>
+                <sonar.java.binaries>target/classes</sonar.java.binaries>
+                <sonar.java.libraries>target/dependency/*.jar</sonar.java.libraries>
 
                 <jacoco-maven-plugin.version>0.8.6</jacoco-maven-plugin.version>
             </properties>
@@ -185,6 +186,38 @@
                                     <goal>report-aggregate</goal>
                                 </goals>
                                 <phase>verify</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>${maven-surefire-plugin.version}</version>
+                        <configuration>
+                            <argLine>
+                                --add-opens juery.api/fr.ght1pc9kc.juery.api=ALL-UNNAMED
+                                --add-opens juery.core/fr.ght1pc9kc.juery.core=ALL-UNNAMED
+                                --add-opens juery.core/fr.ght1pc9kc.juery.core.filter=ALL-UNNAMED
+                                --add-opens juery.jooq/fr.ght1pc9kc.juery.jooq.pagination=ALL-UNNAMED
+                                --add-opens juery.jooq/fr.ght1pc9kc.juery.jooq.filter=ALL-UNNAMED
+                                ${argLine}
+                            </argLine>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>3.1.1</version>
+                        <executions>
+                            <execution>
+                                <id>copy-dependencies</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>copy-dependencies</goal>
+                                </goals>
+                                <configuration>
+                                    <includeArtifactIds>lombok</includeArtifactIds>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
