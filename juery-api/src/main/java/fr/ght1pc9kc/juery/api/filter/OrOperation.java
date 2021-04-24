@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Value
-public class OrOperation extends Criteria {
+public class OrOperation implements Criteria {
     public List<Criteria> orCriteria;
 
     @Override
@@ -24,7 +24,6 @@ public class OrOperation extends Criteria {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
         OrOperation that = (OrOperation) o;
         return this.orCriteria.containsAll(that.orCriteria)
                 && that.orCriteria.containsAll(this.orCriteria);

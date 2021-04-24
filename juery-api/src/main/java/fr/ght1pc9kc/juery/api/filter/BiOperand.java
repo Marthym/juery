@@ -4,9 +4,9 @@ import fr.ght1pc9kc.juery.api.Criteria;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 
+@EqualsAndHashCode
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public abstract class BiOperand<T> extends Criteria {
+public abstract class BiOperand<T> implements Criteria {
     public CriterionProperty field;
     public CriterionValue<T> value;
 

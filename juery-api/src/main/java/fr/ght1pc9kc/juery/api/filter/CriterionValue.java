@@ -6,10 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+@EqualsAndHashCode
 @Getter(AccessLevel.NONE)
-@EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor(access = AccessLevel.PACKAGE)
-public class CriterionValue<T> extends Criteria {
+public class CriterionValue<T> implements Criteria {
     static final CriterionValue<Void> NULL = new CriterionValue<>(null);
 
     public T value;

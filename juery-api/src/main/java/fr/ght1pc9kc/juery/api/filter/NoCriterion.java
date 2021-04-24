@@ -5,8 +5,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 
 @Value
-@EqualsAndHashCode(callSuper = true)
-public class NoCriterion extends Criteria {
+@EqualsAndHashCode
+public class NoCriterion implements Criteria {
     public static final NoCriterion NONE = new NoCriterion();
 
     @Override

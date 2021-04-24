@@ -5,8 +5,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Value;
 
 @Value
-@EqualsAndHashCode(callSuper = true)
-public class NotOperation extends Criteria {
+@EqualsAndHashCode
+public class NotOperation implements Criteria {
     public Criteria negative;
 
     @Override

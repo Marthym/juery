@@ -1,7 +1,6 @@
 package fr.ght1pc9kc.juery.api;
 
 import fr.ght1pc9kc.juery.api.filter.*;
-import lombok.EqualsAndHashCode;
 
 import java.util.Arrays;
 import java.util.List;
@@ -9,8 +8,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@EqualsAndHashCode
-public abstract class Criteria {
+public interface Criteria {
 
     public static NoCriterion none() {
         return NoCriterion.NONE;
@@ -70,11 +68,11 @@ public abstract class Criteria {
         return new CriterionProperty(property);
     }
 
-    public Criteria and(Criteria right) {
+    default Criteria and(Criteria right) {
         return and(this, right);
     }
 
-    public Criteria or(Criteria right) {
+    default Criteria or(Criteria right) {
         return or(this, right);
     }
 
