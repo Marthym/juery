@@ -1,4 +1,4 @@
-# Juery
+# Juery [![](https://img.shields.io/github/releaseMarthym/juery.svg)](https://GitHub.com/Marthym/juery/releases/) [![GitHub license](https://img.shields.io/github/license/Marthym/juery.svg)](https://github.com/Marthym/juery/blob/master/LICENSE)
 
 **Juery** is a tiny Java library to manage search and filter query from user to database. **api** and **core** packages 
 have no dependencies. They contain everything you need to use Juery. The **jooq** package contains useful tools for 
@@ -6,7 +6,7 @@ projects using the jOOQ DSL.
 
 ## Installation
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
+Use the package manager [maven](https://maven.apache.org/) to install juery.
 
 ```xml
 <dependency>
@@ -55,4 +55,5 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 Please make sure to update tests as appropriate.
 
 ## License
+
 [MIT](https://choosealicense.com/licenses/mit/)
