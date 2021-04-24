@@ -24,6 +24,7 @@ public class ListPropertiesCriteriaVisitor implements Criteria.Visitor<List<Stri
     public List<String> visitAnd(AndOperation operation) {
         return operation.andCriteria.stream()
                 .flatMap(a -> a.visit(this).stream())
+                .distinct()
                 .collect(Collectors.toUnmodifiableList());
     }
 
@@ -36,6 +37,7 @@ public class ListPropertiesCriteriaVisitor implements Criteria.Visitor<List<Stri
     public List<String> visitOr(OrOperation operation) {
         return operation.orCriteria.stream()
                 .flatMap(a -> a.visit(this).stream())
+                .distinct()
                 .collect(Collectors.toUnmodifiableList());
     }
 

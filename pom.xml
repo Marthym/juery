@@ -123,6 +123,7 @@
                     <configuration>
                         <argLine>
                             --add-opens juery.api/fr.ght1pc9kc.juery.api=ALL-UNNAMED
+                            --add-opens juery.api/fr.ght1pc9kc.juery.api.filter=ALL-UNNAMED
                             --add-opens juery.core/fr.ght1pc9kc.juery.core=ALL-UNNAMED
                             --add-opens juery.core/fr.ght1pc9kc.juery.core.filter=ALL-UNNAMED
                             --add-opens juery.jooq/fr.ght1pc9kc.juery.jooq.pagination=ALL-UNNAMED
@@ -196,6 +197,7 @@
                         <configuration>
                             <argLine>
                                 --add-opens juery.api/fr.ght1pc9kc.juery.api=ALL-UNNAMED
+                                --add-opens juery.api/fr.ght1pc9kc.juery.api.filter=ALL-UNNAMED
                                 --add-opens juery.core/fr.ght1pc9kc.juery.core=ALL-UNNAMED
                                 --add-opens juery.core/fr.ght1pc9kc.juery.core.filter=ALL-UNNAMED
                                 --add-opens juery.jooq/fr.ght1pc9kc.juery.jooq.pagination=ALL-UNNAMED

@@ -25,7 +25,7 @@ class CriteriaTest {
     @Test
     void should_or_none_criteria() {
         {
-            Criteria expected = Criteria.property("obiwan").eq("kenobi");
+            Criteria expected = Criteria.property("size").gt(42);
             Criteria actual = Criteria.or(Criteria.none(), expected);
 
             Assertions.assertThat(actual).isEqualTo(expected);
@@ -55,13 +55,13 @@ class CriteriaTest {
                     Criteria.property("obiwan").eq("kenobi"),
                     Criteria.property("luke").eq("skywalker"),
                     Criteria.property("obiwan").eq("kenobi"),
-                    Criteria.property("leia").eq("organa")
+                    Criteria.property("leia").in("jedi", "politician")
             );
             Assertions.assertThat(actual).isInstanceOf(AndOperation.class);
             Assertions.assertThat(((AndOperation) actual).andCriteria).containsExactly(
                     Criteria.property("obiwan").eq("kenobi"),
                     Criteria.property("luke").eq("skywalker"),
-                    Criteria.property("leia").eq("organa")
+                    Criteria.property("leia").in("jedi", "politician")
             );
         }
     }
@@ -75,14 +75,14 @@ class CriteriaTest {
         {
             Criteria actual = Criteria.or(
                     Criteria.property("obiwan").eq("kenobi"),
-                    Criteria.property("luke").eq("skywalker"),
+                    Criteria.not(Criteria.property("luke").eq("skywalker")),
                     Criteria.property("obiwan").eq("kenobi"),
                     Criteria.property("leia").eq("organa")
             );
             Assertions.assertThat(actual).isInstanceOf(OrOperation.class);
             Assertions.assertThat(((OrOperation) actual).orCriteria).containsExactly(
                     Criteria.property("obiwan").eq("kenobi"),
-                    Criteria.property("luke").eq("skywalker"),
+                    Criteria.not(Criteria.property("luke").eq("skywalker")),
                     Criteria.property("leia").eq("organa")
             );
         }
@@ -99,8 +99,46 @@ class CriteriaTest {
     @Test
     void should_reverse_equal_or() {
         Criteria left = Criteria.property("name").eq("obiwan");
-        Criteria right = Criteria.property("force").eq("light");
+        Criteria right = Criteria.property("age").lt(57);
 
         Assertions.assertThat(left.or(right)).isEqualTo(right.or(left));
+    }
+
+    @Test
+    void should_ignore_double_negative() {
+        Criteria expected = Criteria.property("name").eq("obiwan");
+        Criteria actual = Criteria.not(Criteria.not(expected));
+
+        Assertions.assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    void should_flatten_or_operation() {
+        Criteria actual = Criteria.or(
+                Criteria.or(Criteria.property("name").eq("Obiwan"), Criteria.property("lastname").eq("Kenobi")),
+                Criteria.or(Criteria.property("name").eq("Luke"), Criteria.property("lastname").eq("Skywalker"))
+        );
+
+        Assertions.assertThat(actual).isEqualTo(Criteria.or(
+                Criteria.property("name").eq("Obiwan"),
+                Criteria.property("lastname").eq("Kenobi"),
+                Criteria.property("name").eq("Luke"),
+                Criteria.property("lastname").eq("Skywalker")
+        ));
+    }
+
+    @Test
+    void should_flatten_and_operation() {
+        Criteria actual = Criteria.and(
+                Criteria.and(Criteria.property("name").eq("Obiwan"), Criteria.property("lastname").eq("Kenobi")),
+                Criteria.and(Criteria.property("faction").eq("jedi"), Criteria.property("age").lt(57))
+        );
+
+        Assertions.assertThat(actual).isEqualTo(Criteria.and(
+                Criteria.property("name").eq("Obiwan"),
+                Criteria.property("lastname").eq("Kenobi"),
+                Criteria.property("faction").eq("jedi"),
+                Criteria.property("age").lt(57)
+        ));
     }
 }

@@ -5,17 +5,19 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class StringSearchVisitorTest {
-    public StringSearchVisitor tested = new StringSearchVisitor();
+class ListPropertiesCriteriaVisitorTest {
+
+    private final ListPropertiesCriteriaVisitor tested = new ListPropertiesCriteriaVisitor();
 
     @ParameterizedTest
     @MethodSource(value = "provideSCriteria")
-    void should_consume_criteria_as_string(Criteria criteria, String expected) {
-        String actual = criteria.visit(tested);
+    void should_consume_criteria_as_string(Criteria criteria, List<String> expected) {
+        List<String> actual = criteria.visit(tested);
         assertThat(actual).isEqualTo(expected);
     }
 
@@ -23,15 +25,15 @@ class StringSearchVisitorTest {
         return Stream.of(
                 Arguments.of(Criteria.property("jedi").eq("Obiwan")
                                 .and(Criteria.property("age").gt(40).or(Criteria.property("age").lt(20))),
-                        "(jedi = 'Obiwan' and (age > 40 or age < 20))"),
+                        List.of("jedi", "age")),
                 Arguments.of(Criteria.property("jedi").in("Obiwan", "Anakin", "Luke")
                                 .and(Criteria.property("age").gt(40).or(Criteria.property("age").lt(20))),
-                        "(jedi in [Obiwan, Anakin, Luke] and (age > 40 or age < 20))"),
+                        List.of("jedi", "age")),
                 Arguments.of(Criteria.not(Criteria.property("faction").eq("sith"))
                                 .and(Criteria.property("age").gt(40))
                                 .or(Criteria.property("age").lt(20)),
-                        "((not (faction = 'sith') and age > 40) or age < 20)"),
-                Arguments.of(Criteria.none(), "")
+                        List.of("faction", "age")),
+                Arguments.of(Criteria.none(), List.of())
         );
     }
 }
