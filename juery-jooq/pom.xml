@@ -6,16 +6,17 @@
     <parent>
         <groupId>fr.ght1pc9kc</groupId>
         <artifactId>juery</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>juery-jooq</artifactId>
+    <name>Juery jOOQ</name>
 
     <dependencies>
         <dependency>
             <groupId>fr.ght1pc9kc</groupId>
             <artifactId>juery-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
