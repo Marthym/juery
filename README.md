@@ -1,5 +1,9 @@
 # Juery [![](https://img.shields.io/github/releaseMarthym/juery.svg)](https://GitHub.com/Marthym/juery/releases/) [![GitHub license](https://img.shields.io/github/license/Marthym/juery.svg)](https://github.com/Marthym/juery/blob/master/LICENSE)
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Marthym_juery&metric=alert_status)](https://sonarcloud.io/dashboard?id=Marthym_juery)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Marthym_juery&metric=coverage)](https://sonarcloud.io/dashboard?id=Marthym_juery)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Marthym_juery&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=Marthym_juery)
+
 **Juery** is a tiny Java library to manage search and filter query from user to database. **api** and **core** packages 
 have no dependencies. They contain everything you need to use Juery. The **jooq** package contains useful tools for 
 projects using the jOOQ DSL.
