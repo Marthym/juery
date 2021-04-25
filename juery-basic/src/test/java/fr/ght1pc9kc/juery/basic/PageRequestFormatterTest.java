@@ -1,4 +1,4 @@
-package fr.ght1pc9kc.juery.core;
+package fr.ght1pc9kc.juery.basic;
 
 import fr.ght1pc9kc.juery.api.Criteria;
 import fr.ght1pc9kc.juery.api.PageRequest;

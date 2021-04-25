@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.ght1pc9kc.juery.core.common.lang3;
+package fr.ght1pc9kc.juery.basic.common.lang3;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

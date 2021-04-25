@@ -1,4 +1,4 @@
-package fr.ght1pc9kc.juery.core.filter;
+package fr.ght1pc9kc.juery.basic.filter;
 
 import fr.ght1pc9kc.juery.api.Criteria;
 import org.junit.jupiter.params.ParameterizedTest;

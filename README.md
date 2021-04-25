@@ -4,7 +4,7 @@
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Marthym_juery&metric=coverage)](https://sonarcloud.io/dashboard?id=Marthym_juery)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Marthym_juery&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=Marthym_juery)
 
-**Juery** is a tiny Java library to manage search and filter query from user to database. **api** and **core** packages 
+**Juery** is a tiny Java library to manage search and filter query from user to database. **api** and **basic** packages 
 have no dependencies. They contain everything you need to use Juery. The **jooq** package contains useful tools for 
 projects using the jOOQ DSL.
 
@@ -20,7 +20,7 @@ Use the package manager [maven](https://maven.apache.org/) to install juery.
 </dependency>
 <dependency>
     <groupId>fr.ght1pc9kc</groupId>
-    <artifactId>juery-core</artifactId>
+    <artifactId>juery-basic</artifactId>
     <version>${juery.version}</version>
 </dependency>
 <dependency>

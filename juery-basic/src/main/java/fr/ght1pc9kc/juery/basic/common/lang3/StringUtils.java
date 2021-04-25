@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.ght1pc9kc.juery.core.common.lang3;
+package fr.ght1pc9kc.juery.basic.common.lang3;
 
 public class StringUtils {
     private static final int NOT_FOUND = -1;

@@ -1,13 +1,13 @@
-package fr.ght1pc9kc.juery.core;
+package fr.ght1pc9kc.juery.basic;
 
 import fr.ght1pc9kc.juery.api.Criteria;
 import fr.ght1pc9kc.juery.api.PageRequest;
 import fr.ght1pc9kc.juery.api.pagination.Direction;
 import fr.ght1pc9kc.juery.api.pagination.Order;
 import fr.ght1pc9kc.juery.api.pagination.Sort;
-import fr.ght1pc9kc.juery.core.common.lang3.BooleanUtils;
-import fr.ght1pc9kc.juery.core.common.lang3.NumberUtils;
-import fr.ght1pc9kc.juery.core.filter.QueryStringFilterVisitor;
+import fr.ght1pc9kc.juery.basic.common.lang3.BooleanUtils;
+import fr.ght1pc9kc.juery.basic.common.lang3.NumberUtils;
+import fr.ght1pc9kc.juery.basic.filter.QueryStringFilterVisitor;
 import lombok.experimental.UtilityClass;
 
 import java.net.URLDecoder;

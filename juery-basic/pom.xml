@@ -9,7 +9,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>juery-core</artifactId>
+    <artifactId>juery-basic</artifactId>
 
     <dependencies>
         <dependency>
