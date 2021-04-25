@@ -12,7 +12,7 @@ import lombok.Getter;
 public class CriterionValue<T> implements Criteria {
     static final CriterionValue<Void> NULL = new CriterionValue<>(null);
 
-    public T value;
+    public final T value;
 
     @Override
     public boolean isEmpty() {

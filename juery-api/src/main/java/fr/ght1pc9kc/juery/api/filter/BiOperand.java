@@ -7,8 +7,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode
 @AllArgsConstructor
 public abstract class BiOperand<T> implements Criteria {
-    public CriterionProperty field;
-    public CriterionValue<T> value;
+    public final CriterionProperty field;
+    public final CriterionValue<T> value;
 
     @Override
     public boolean isEmpty() {

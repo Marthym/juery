@@ -7,7 +7,7 @@ import lombok.Value;
 @Value
 @EqualsAndHashCode
 public class NoCriterion implements Criteria {
-    public static final NoCriterion NONE = new NoCriterion();
+    public static final NoCriterion NO_CRITERION = new NoCriterion();
 
     @Override
     public boolean isEmpty() {

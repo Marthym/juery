@@ -12,10 +12,10 @@ import lombok.Value;
 public class PageRequest {
     private static final PageRequest ALL = new PageRequest(-1, -1, Sort.of(), Criteria.none());
 
-    public int page;
-    public int size;
-    public Sort sort;
-    public Criteria filter;
+    public final int page;
+    public final int size;
+    public final Sort sort;
+    public final Criteria filter;
 
     public static PageRequest of(int page, int size) {
         if (page < 0 || size < 0) {

@@ -8,7 +8,7 @@ import java.util.Objects;
 
 @Value
 public class OrOperation implements Criteria {
-    public List<Criteria> orCriteria;
+    public final List<Criteria> orCriteria;
 
     @Override
     public boolean isEmpty() {

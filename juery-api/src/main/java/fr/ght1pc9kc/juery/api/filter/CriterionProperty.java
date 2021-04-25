@@ -15,7 +15,7 @@ import java.util.Objects;
 @Getter(AccessLevel.PACKAGE)
 @AllArgsConstructor
 public class CriterionProperty {
-    public String property;
+    public final String property;
 
     public <T> Criteria eq(T value) {
         if (value == null) {

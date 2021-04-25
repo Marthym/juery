@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 public interface Criteria {
 
     public static NoCriterion none() {
-        return NoCriterion.NONE;
+        return NoCriterion.NO_CRITERION;
     }
 
     public static Criteria and(Criteria... andCriteria) {

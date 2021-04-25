@@ -34,7 +34,7 @@ public class PageRequestFormatter {
     private static final QueryStringFilterVisitor CRITERIA_FORMATTER = new QueryStringFilterVisitor();
 
     public static String formatPageRequest(PageRequest pr) {
-        StringBuilder qs = new StringBuilder();
+        var qs = new StringBuilder();
         if (pr.page > 0) {
             qs.append(DEFAULT_PAGE_PARAMETER + "=").append(pr.page).append('&');
         }
@@ -50,7 +50,7 @@ public class PageRequestFormatter {
         if (qs.length() == 0) {
             return "";
         }
-        char c = qs.charAt(qs.length() - 1);
+        var c = qs.charAt(qs.length() - 1);
         if (c == '&') {
             qs.setLength(qs.length() - 1);
         }
@@ -58,7 +58,7 @@ public class PageRequestFormatter {
     }
 
     public static String formatSortValue(Sort sort) {
-        StringBuilder qs = new StringBuilder();
+        var qs = new StringBuilder();
         for (Order order : sort.getOrders()) {
             if (order.getDirection() == Direction.DESC) {
                 qs.append('-');
@@ -90,14 +90,14 @@ public class PageRequestFormatter {
                 .sorted(Entry.comparingByKey())
                 .map(e -> {
                     Object value;
-                    Boolean bValue = BooleanUtils.toBooleanObject(e.getValue());
+                    var bValue = BooleanUtils.toBooleanObject(e.getValue());
                     if (bValue != null) {
                         value = bValue;
                     } else if (NumberUtils.isCreatable(e.getValue())) {
                         value = NumberUtils.createNumber(e.getValue());
                     } else {
                         value = (e.getValue() != null && !e.getValue().isBlank())
-                                ? e.getValue() : true;
+                                ? e.getValue() : Boolean.TRUE;
                     }
                     return Criteria.property(e.getKey()).eq(value);
                 }).toArray(Criteria[]::new);
@@ -125,7 +125,7 @@ public class PageRequestFormatter {
                 .filter(not(String::isBlank))
                 .filter(s -> s.length() > 1 || (s.charAt(0) != '-' && s.charAt(0) != '+'))
                 .map(s -> {
-                    char d = s.charAt(0);
+                    var d = s.charAt(0);
                     if (d == '-') {
                         return Order.desc(s.substring(1).strip());
                     } else if (d == '+') {
