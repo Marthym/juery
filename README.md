@@ -1,4 +1,4 @@
-# Juery [![](https://img.shields.io/github/releaseMarthym/juery.svg)](https://GitHub.com/Marthym/juery/releases/) [![GitHub license](https://img.shields.io/github/license/Marthym/juery.svg)](https://github.com/Marthym/juery/blob/master/LICENSE)
+# Juery [![](https://img.shields.io/github/release/Marthym/juery.svg)](https://GitHub.com/Marthym/juery/releases/) [![GitHub license](https://img.shields.io/github/license/Marthym/juery.svg)](https://github.com/Marthym/juery/blob/master/LICENSE)
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Marthym_juery&metric=alert_status)](https://sonarcloud.io/dashboard?id=Marthym_juery)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Marthym_juery&metric=coverage)](https://sonarcloud.io/dashboard?id=Marthym_juery)
