@@ -136,6 +136,28 @@ Cursor<Record> cursor = query.fetchLazy();
 We find the `PropertiesMappers.FEEDS_PROPERTIES_MAPPING`, optional, which allows to make the link between the sort 
 criteria and the table fields.
 
+### PropertiesMappers example
+
+As an example to illustrate what is `PropertiesMappers.FEEDS_PROPERTIES_MAPPING` in the context of using jOOQ as DSL.
+
+```java
+public static final Map<String, Field<?>> FEEDS_PROPERTIES_MAPPING = Map.of(
+        "id", FEEDS.FEED_ID,
+        "name", FEEDS.FEED_NAME,
+        ...
+);
+```
+
+`FEEDS` was a jOOQ Table generated before compilation with `jooq-codegen-maven` Maven Plugin. `"id"` and `"name"` was properties
+used in `Criteria`.
+
+```java
+import fr.ght1pc9kc.juery.api.Criteria;
+
+Criteria.property("id").eq("F0042")
+    .and(Criteria.property("name").eq("H2G2"));
+```
+
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
