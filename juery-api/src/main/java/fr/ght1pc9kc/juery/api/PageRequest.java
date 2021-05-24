@@ -1,31 +1,28 @@
 package fr.ght1pc9kc.juery.api;
 
 import fr.ght1pc9kc.juery.api.pagination.Sort;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Value;
 
 @Value
-@Builder
-@Getter(AccessLevel.NONE)
+@RequiredArgsConstructor
 public class PageRequest {
-    private static final PageRequest ALL = new PageRequest(-1, -1, Sort.of(), Criteria.none());
+    private static final PageRequest ALL = new PageRequest(Pagination.ALL, Criteria.none());
 
-    public final int page;
-    public final int size;
-    public final Sort sort;
-    public final Criteria filter;
+    final Pagination pagination;
+    final Criteria filter;
 
-    public static PageRequest of(int page, int size) {
-        if (page < 0 || size < 0) {
+    public static PageRequest of(Pagination page, Criteria filter) {
+        if (Pagination.ALL == page && Criteria.none() == filter) {
             return ALL;
         }
-        return PageRequest.builder()
-                .page(page).size(size)
-                .filter(Criteria.none())
-                .sort(Sort.of())
-                .build();
+        return new PageRequest(page, filter);
+    }
+
+    @Deprecated(forRemoval = true, since = "1.1.0")
+    public static PageRequest of(int page, int size) {
+        Pagination pagination = (page < 0 || size < 0) ? Pagination.ALL : Pagination.of(page, size);
+        return of(pagination, Criteria.none());
     }
 
     public static PageRequest all() {
@@ -33,14 +30,20 @@ public class PageRequest {
     }
 
     public static PageRequest all(Criteria criteria) {
-        return new PageRequest(-1, -1, Sort.of(), criteria);
+        return new PageRequest(Pagination.ALL, criteria);
     }
 
     public static PageRequest one(Criteria criteria) {
-        return new PageRequest(0, 1, Sort.of(), criteria);
+        return new PageRequest(Pagination.FIRST, criteria);
     }
 
     public PageRequest and(Criteria criteria) {
-        return new PageRequest(page, size, sort, filter.and(criteria));
+        return new PageRequest(pagination, filter.and(criteria));
+    }
+
+    @Deprecated(forRemoval = true, since = "1.1.0")
+    PageRequest(int page, int size, Sort sort, Criteria filter) {
+        this.pagination = Pagination.of(page, size, sort);
+        this.filter = filter;
     }
 }

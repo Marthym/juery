@@ -4,6 +4,7 @@ import fr.ght1pc9kc.juery.api.Criteria;
 import fr.ght1pc9kc.juery.api.PageRequest;
 import fr.ght1pc9kc.juery.api.pagination.Direction;
 import fr.ght1pc9kc.juery.api.pagination.Order;
+import fr.ght1pc9kc.juery.api.Pagination;
 import fr.ght1pc9kc.juery.api.pagination.Sort;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -32,27 +33,22 @@ class PageRequestFormatterTest {
                                 "_s", "name, -email",
                                 "profile", "jedi",
                                 "job", "master"),
-                        PageRequest.builder()
-                                .page(2).size(100)
-                                .filter(Criteria.property("job").eq("master").and(Criteria.property("profile").eq("jedi")))
-                                .sort(Sort.of(new Order(Direction.ASC, "name"), new Order(Direction.DESC, "email")))
-                                .build()),
+                        PageRequest.of(
+                                Pagination.of(2, 100,
+                                        Sort.of(new Order(Direction.ASC, "name"), new Order(Direction.DESC, "email"))),
+                                Criteria.property("job").eq("master").and(Criteria.property("profile").eq("jedi")))),
                 Arguments.of(
                         Map.of("_pp", "200"),
-                        PageRequest.builder()
-                                .page(0).size(100)
-                                .filter(Criteria.none())
-                                .sort(Sort.of())
-                                .build()),
+                        PageRequest.of(
+                                Pagination.of(0, 100, Sort.of()),
+                                Criteria.none())),
                 Arguments.of(
                         Map.of(
                                 "_pp", "200",
                                 "name", ""),
-                        PageRequest.builder()
-                                .page(0).size(100)
-                                .filter(Criteria.property("name").eq(true))
-                                .sort(Sort.of())
-                                .build())
+                        PageRequest.of(
+                                Pagination.of(0, 100, Sort.of()),
+                                Criteria.property("name").eq(true)))
         );
     }
 
@@ -82,8 +78,8 @@ class PageRequestFormatterTest {
     void should_parse_page_request_from_string(String qs, PageRequest expected) {
         PageRequest actual = PageRequestFormatter.parse(qs);
 
-        Assertions.assertThat(actual.sort).isEqualTo(expected.sort);
-        Assertions.assertThat(actual.filter).isEqualTo(expected.filter);
+        Assertions.assertThat(actual.pagination().sort()).isEqualTo(expected.pagination().sort());
+        Assertions.assertThat(actual.filter()).isEqualTo(expected.filter());
         Assertions.assertThat(actual).isEqualTo(expected);
     }
 
@@ -92,25 +88,15 @@ class PageRequestFormatterTest {
         return Stream.of(
                 Arguments.of(
                         "_p=2&_s=name,-email&profile=jedi&job=master",
-                        PageRequest.builder()
-                                .page(2).size(100)
-                                .filter(Criteria.property("job").eq("master").and(Criteria.property("profile").eq("jedi")))
-                                .sort(Sort.of(new Order(Direction.ASC, "name"), new Order(Direction.DESC, "email")))
-                                .build()),
-                Arguments.of(
-                        "",
-                        PageRequest.builder()
-                                .page(-1).size(-1)
-                                .filter(Criteria.none())
-                                .sort(Sort.of())
-                                .build()),
+                        PageRequest.of(
+                                Pagination.of(2, 100, Sort.of(new Order(Direction.ASC, "name"), new Order(Direction.DESC, "email"))),
+                                Criteria.property("job").eq("master").and(Criteria.property("profile").eq("jedi")))),
+                Arguments.of("", PageRequest.all()),
                 Arguments.of(
                         "name",
-                        PageRequest.builder()
-                                .page(0).size(100)
-                                .filter(Criteria.property("name").eq(true))
-                                .sort(Sort.of())
-                                .build())
+                        PageRequest.of(
+                                Pagination.of(0, 100),
+                                Criteria.property("name").eq(true)))
         );
     }
 
@@ -128,25 +114,15 @@ class PageRequestFormatterTest {
         return Stream.of(
                 Arguments.of(
                         "_p=2&_s=name,-email&profile=jedi&job=master",
-                        PageRequest.builder()
-                                .page(2).size(100)
-                                .filter(Criteria.property("profile").eq("jedi").and(Criteria.property("job").eq("master")))
-                                .sort(Sort.of(new Order(Direction.ASC, "name"), new Order(Direction.DESC, "email")))
-                                .build()),
+                        PageRequest.of(
+                                Pagination.of(2, 100, Sort.of(new Order(Direction.ASC, "name"), new Order(Direction.DESC, "email"))),
+                                Criteria.property("profile").eq("jedi").and(Criteria.property("job").eq("master")))),
                 Arguments.of(
-                        "",
-                        PageRequest.builder()
-                                .page(0).size(100)
-                                .filter(Criteria.none())
-                                .sort(Sort.of())
-                                .build()),
+                        "", PageRequest.of(Pagination.of(0, 100), Criteria.none())),
                 Arguments.of(
                         "name=true",
-                        PageRequest.builder()
-                                .page(0).size(100)
-                                .filter(Criteria.property("name").eq(true))
-                                .sort(Sort.of())
-                                .build())
+                        PageRequest.of(Pagination.of(0, 100),
+                                Criteria.property("name").eq(true)))
         );
     }
 

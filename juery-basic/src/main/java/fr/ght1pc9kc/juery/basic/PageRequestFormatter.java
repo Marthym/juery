@@ -4,6 +4,7 @@ import fr.ght1pc9kc.juery.api.Criteria;
 import fr.ght1pc9kc.juery.api.PageRequest;
 import fr.ght1pc9kc.juery.api.pagination.Direction;
 import fr.ght1pc9kc.juery.api.pagination.Order;
+import fr.ght1pc9kc.juery.api.Pagination;
 import fr.ght1pc9kc.juery.api.pagination.Sort;
 import fr.ght1pc9kc.juery.basic.common.lang3.BooleanUtils;
 import fr.ght1pc9kc.juery.basic.common.lang3.NumberUtils;
@@ -35,17 +36,17 @@ public class PageRequestFormatter {
 
     public static String formatPageRequest(PageRequest pr) {
         var qs = new StringBuilder();
-        if (pr.page > 0) {
-            qs.append(DEFAULT_PAGE_PARAMETER + "=").append(pr.page).append('&');
+        if (pr.pagination().page() > 0) {
+            qs.append(DEFAULT_PAGE_PARAMETER + "=").append(pr.pagination().page()).append('&');
         }
-        if (pr.size < MAX_PAGE_SIZE) {
-            qs.append(DEFAULT_SORT_PARAMETER + "=").append(pr.size).append('&');
+        if (pr.pagination().size() < MAX_PAGE_SIZE) {
+            qs.append(DEFAULT_SORT_PARAMETER + "=").append(pr.pagination().size()).append('&');
         }
-        if (!pr.sort.equals(Sort.of())) {
-            qs.append(DEFAULT_SORT_PARAMETER + "=").append(formatSortValue(pr.sort)).append('&');
+        if (!pr.pagination().sort().equals(Sort.of())) {
+            qs.append(DEFAULT_SORT_PARAMETER + "=").append(formatSortValue(pr.pagination().sort())).append('&');
         }
-        if (!pr.filter.isEmpty()) {
-            qs.append(pr.filter.visit(CRITERIA_FORMATTER));
+        if (!pr.filter().isEmpty()) {
+            qs.append(pr.filter().visit(CRITERIA_FORMATTER));
         }
         if (qs.length() == 0) {
             return "";
@@ -59,11 +60,11 @@ public class PageRequestFormatter {
 
     public static String formatSortValue(Sort sort) {
         var qs = new StringBuilder();
-        for (Order order : sort.getOrders()) {
-            if (order.getDirection() == Direction.DESC) {
+        for (Order order : sort.orders()) {
+            if (order.direction() == Direction.DESC) {
                 qs.append('-');
             }
-            qs.append(URLEncoder.encode(order.getProperty(), StandardCharsets.UTF_8));
+            qs.append(URLEncoder.encode(order.property(), StandardCharsets.UTF_8));
             qs.append(',');
         }
         qs.setLength(qs.length() - 1);
@@ -102,12 +103,10 @@ public class PageRequestFormatter {
                     return Criteria.property(e.getKey()).eq(value);
                 }).toArray(Criteria[]::new);
 
-        return PageRequest.builder()
-                .page(page)
-                .size(perPage)
-                .sort(sort)
-                .filter(Criteria.and(filters))
-                .build();
+        return PageRequest.of(
+                Pagination.of(page, perPage, sort),
+                Criteria.and(filters)
+        );
     }
 
     public static PageRequest parse(String queryString) {

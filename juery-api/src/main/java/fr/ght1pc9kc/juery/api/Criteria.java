@@ -10,11 +10,11 @@ import java.util.stream.Stream;
 
 public interface Criteria {
 
-    public static NoCriterion none() {
+    static NoCriterion none() {
         return NoCriterion.NO_CRITERION;
     }
 
-    public static Criteria and(Criteria... andCriteria) {
+    static Criteria and(Criteria... andCriteria) {
         List<Criteria> filtered = Arrays.stream(andCriteria)
                 .filter(Predicate.not(Criteria::isEmpty))
                 .flatMap(a -> {
@@ -34,7 +34,7 @@ public interface Criteria {
         return new AndOperation(filtered);
     }
 
-    public static Criteria or(Criteria... orCriteria) {
+    static Criteria or(Criteria... orCriteria) {
         List<Criteria> filtered = Arrays.stream(orCriteria)
                 .filter(Predicate.not(Criteria::isEmpty))
                 .flatMap(a -> {
@@ -54,7 +54,7 @@ public interface Criteria {
         return new OrOperation(filtered);
     }
 
-    public static Criteria not(Criteria criteria) {
+    static Criteria not(Criteria criteria) {
         if (criteria.isEmpty()) {
             return criteria;
         }
@@ -64,7 +64,7 @@ public interface Criteria {
         return new NotOperation(criteria);
     }
 
-    public static CriterionProperty property(String property) {
+    static CriterionProperty property(String property) {
         return new CriterionProperty(property);
     }
 
@@ -76,11 +76,11 @@ public interface Criteria {
         return or(this, right);
     }
 
-    public abstract boolean isEmpty();
+    boolean isEmpty();
 
-    public abstract <R> R visit(Visitor<R> visitor);
+    <R> R visit(Visitor<R> visitor);
 
-    public interface Visitor<R> {
+    interface Visitor<R> {
         R visitNoCriteria(NoCriterion none);
 
         R visitAnd(AndOperation operation);
