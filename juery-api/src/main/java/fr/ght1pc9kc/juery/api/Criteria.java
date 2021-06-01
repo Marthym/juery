@@ -95,6 +95,14 @@ public interface Criteria {
 
         <T> R visitLowerThan(LowerThanOperation<T> operation);
 
+        default <T> R visitStartWith(StartWithOperation<T> operation) {
+            throw new IllegalStateException("START_WITH operation not implemented in visitor");
+        }
+
+        default <T> R visitEndWith(EndWithOperation<T> operation) {
+            throw new IllegalStateException("END_WITH operation not implemented in visitor");
+        }
+
         default <T> R visitIn(InOperation<T> operation) {
             throw new IllegalStateException("IN operation not implemented in visitor");
         }

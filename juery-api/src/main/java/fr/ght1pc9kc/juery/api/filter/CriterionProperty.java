@@ -45,4 +45,12 @@ public class CriterionProperty {
     public <T> Criteria lt(T value) {
         return new LowerThanOperation<>(this, new CriterionValue<>(value));
     }
+
+    public <T> Criteria startWith(T value) {
+        return new StartWithOperation<>(this, new CriterionValue<>(value));
+    }
+
+    public <T> Criteria endWith(T value) {
+        return new EndWithOperation<>(this, new CriterionValue<>(value));
+    }
 }
