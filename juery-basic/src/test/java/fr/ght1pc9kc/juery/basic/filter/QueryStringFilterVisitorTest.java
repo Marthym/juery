@@ -14,6 +14,9 @@ class QueryStringFilterVisitorTest {
         assertThat(Criteria.property("name").eq("Obiwan")
                 .and(Criteria.property("faction").eq("jedi")).visit(tested)).isEqualTo("name=Obiwan&faction=jedi");
         assertThat(Criteria.none().visit(tested)).isEmpty();
+        assertThat(Criteria.property("name").startWith("Obiwan")
+                .and(Criteria.property("faction").endWith("jedi")).visit(tested)).isEqualTo("name=%5EObiwan&faction=jedi%24");
+        assertThat(Criteria.none().visit(tested)).isEmpty();
     }
 
     @Test

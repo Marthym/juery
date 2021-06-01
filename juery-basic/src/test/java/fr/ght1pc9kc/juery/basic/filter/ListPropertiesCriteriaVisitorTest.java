@@ -33,6 +33,9 @@ class ListPropertiesCriteriaVisitorTest {
                                 .and(Criteria.property("age").gt(40))
                                 .or(Criteria.property("age").lt(20)),
                         List.of("faction", "age")),
+                Arguments.of(Criteria.property("name").startWith("Obiwan")
+                                .and(Criteria.property("lastname").endWith("Kenobi")),
+                        List.of("name", "lastname")),
                 Arguments.of(Criteria.none(), List.of())
         );
     }
