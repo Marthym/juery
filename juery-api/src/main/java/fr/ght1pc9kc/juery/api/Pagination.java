@@ -25,6 +25,8 @@ public final class Pagination {
     public static Pagination of(int page, int size, Sort sort) {
         if (sort == Sort.UNSORTED) {
             return of(page, size);
+        } else if (page == 0 && size == 1) {
+            return FIRST;
         } else {
             return new Pagination(page, size, sort);
         }

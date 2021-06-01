@@ -5,6 +5,8 @@ import fr.ght1pc9kc.juery.api.pagination.Sort;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
+
 class PageRequestTest {
     @Test
     void should_create_page_request() {
@@ -21,6 +23,16 @@ class PageRequestTest {
         PageRequest actual = PageRequest.of(-1, 10);
 
         Assertions.assertThat(actual).isEqualTo(PageRequest.all());
+    }
+
+    @Test
+    void should_create_page_request_one() {
+        PageRequest actual = PageRequest.one(Criteria.none());
+
+        assertAll(
+                () -> Assertions.assertThat(actual.pagination()).isSameAs(Pagination.FIRST),
+                () -> Assertions.assertThat(actual.filter()).isEqualTo(Criteria.none())
+        );
     }
 
     @Test
