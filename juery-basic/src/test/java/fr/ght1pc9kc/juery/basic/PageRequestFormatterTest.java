@@ -2,9 +2,9 @@ package fr.ght1pc9kc.juery.basic;
 
 import fr.ght1pc9kc.juery.api.Criteria;
 import fr.ght1pc9kc.juery.api.PageRequest;
+import fr.ght1pc9kc.juery.api.Pagination;
 import fr.ght1pc9kc.juery.api.pagination.Direction;
 import fr.ght1pc9kc.juery.api.pagination.Order;
-import fr.ght1pc9kc.juery.api.Pagination;
 import fr.ght1pc9kc.juery.api.pagination.Sort;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -32,11 +32,15 @@ class PageRequestFormatterTest {
                                 "_p", "2",
                                 "_s", "name, -email",
                                 "profile", "jedi",
-                                "job", "master"),
+                                "job", "master",
+                                "firstname", "^Obiwan",
+                                "lastname", "Kenobi$"),
                         PageRequest.of(
                                 Pagination.of(2, 100,
                                         Sort.of(new Order(Direction.ASC, "name"), new Order(Direction.DESC, "email"))),
-                                Criteria.property("job").eq("master").and(Criteria.property("profile").eq("jedi")))),
+                                Criteria.property("job").eq("master").and(Criteria.property("profile").eq("jedi"))
+                                        .and(Criteria.property("firstname").startWith("Obiwan"))
+                                        .and(Criteria.property("lastname").endWith("Kenobi")))),
                 Arguments.of(
                         Map.of("_pp", "200"),
                         PageRequest.of(
