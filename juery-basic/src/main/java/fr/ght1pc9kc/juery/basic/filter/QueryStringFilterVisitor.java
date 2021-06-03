@@ -8,6 +8,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
 public class QueryStringFilterVisitor implements Criteria.Visitor<String> {
+
+    private static final String ENCODED_START_CHAR = URLEncoder.encode("^", StandardCharsets.UTF_8);
+    private static final String ENCODED_END_CHAR = URLEncoder.encode("$", StandardCharsets.UTF_8);
+    private static final String ENCODED_CONTAINS_CHAR = URLEncoder.encode("∋", StandardCharsets.UTF_8);
+
     @Override
     public String visitNoCriteria(NoCriterion none) {
         return "";
@@ -58,12 +63,18 @@ public class QueryStringFilterVisitor implements Criteria.Visitor<String> {
     @Override
     public <T> String visitStartWith(StartWithOperation<T> operation) {
         return URLEncoder.encode(operation.field.property, StandardCharsets.UTF_8) + "="
-                + URLEncoder.encode("^", StandardCharsets.UTF_8) + operation.value.visit(this);
+                + ENCODED_START_CHAR + operation.value.visit(this);
     }
 
     @Override
     public <T> String visitEndWith(EndWithOperation<T> operation) {
         return URLEncoder.encode(operation.field.property, StandardCharsets.UTF_8) + "="
-                + operation.value.visit(this) + URLEncoder.encode("$", StandardCharsets.UTF_8);
+                + ENCODED_END_CHAR + operation.value.visit(this);
+    }
+
+    @Override
+    public <T> String visitContains(ContainsOperation<T> operation) {
+        return URLEncoder.encode(operation.field.property, StandardCharsets.UTF_8) + "="
+                + ENCODED_CONTAINS_CHAR + operation.value.visit(this);
     }
 }

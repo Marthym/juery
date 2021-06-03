@@ -111,12 +111,19 @@ public class PageRequestFormatter {
         // Parse operation
         BiFunction<CriterionProperty, Object, Criteria> operation = CriterionProperty::eq;
         if (!StringUtils.isBlank(tmp)) {
-            if (tmp.charAt(0) == '^') {
-                tmp = tmp.substring(1);
-                operation = CriterionProperty::startWith;
-            } else if (tmp.charAt(tmp.length() - 1) == '$') {
-                tmp = tmp.substring(0, tmp.length() - 1);
-                operation = CriterionProperty::endWith;
+            switch (tmp.charAt(0)) {
+                case '^':
+                    tmp = tmp.substring(1);
+                    operation = CriterionProperty::startWith;
+                    break;
+                case '$':
+                    tmp = tmp.substring(1);
+                    operation = CriterionProperty::endWith;
+                    break;
+                case '∋':
+                    tmp = tmp.substring(1);
+                    operation = CriterionProperty::contains;
+                    break;
             }
         }
 

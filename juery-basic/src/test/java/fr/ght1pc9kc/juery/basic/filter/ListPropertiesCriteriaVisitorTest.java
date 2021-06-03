@@ -21,6 +21,7 @@ class ListPropertiesCriteriaVisitorTest {
         assertThat(actual).isEqualTo(expected);
     }
 
+    @SuppressWarnings("unused")
     private static Stream<Arguments> provideSCriteria() {
         return Stream.of(
                 Arguments.of(Criteria.property("jedi").eq("Obiwan")
@@ -34,8 +35,9 @@ class ListPropertiesCriteriaVisitorTest {
                                 .or(Criteria.property("age").lt(20)),
                         List.of("faction", "age")),
                 Arguments.of(Criteria.property("name").startWith("Obiwan")
-                                .and(Criteria.property("lastname").endWith("Kenobi")),
-                        List.of("name", "lastname")),
+                                .and(Criteria.property("lastname").endWith("Kenobi"))
+                                .and(Criteria.property("faction").contains("publiq")),
+                        List.of("name", "lastname", "faction")),
                 Arguments.of(Criteria.none(), List.of())
         );
     }
