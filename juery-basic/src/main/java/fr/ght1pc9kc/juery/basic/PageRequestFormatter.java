@@ -2,12 +2,14 @@ package fr.ght1pc9kc.juery.basic;
 
 import fr.ght1pc9kc.juery.api.Criteria;
 import fr.ght1pc9kc.juery.api.PageRequest;
+import fr.ght1pc9kc.juery.api.Pagination;
+import fr.ght1pc9kc.juery.api.filter.CriterionProperty;
 import fr.ght1pc9kc.juery.api.pagination.Direction;
 import fr.ght1pc9kc.juery.api.pagination.Order;
-import fr.ght1pc9kc.juery.api.Pagination;
 import fr.ght1pc9kc.juery.api.pagination.Sort;
 import fr.ght1pc9kc.juery.basic.common.lang3.BooleanUtils;
 import fr.ght1pc9kc.juery.basic.common.lang3.NumberUtils;
+import fr.ght1pc9kc.juery.basic.common.lang3.StringUtils;
 import fr.ght1pc9kc.juery.basic.filter.QueryStringFilterVisitor;
 import lombok.experimental.UtilityClass;
 
@@ -19,6 +21,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import static java.util.function.Predicate.not;
@@ -89,19 +92,8 @@ public class PageRequestFormatter {
         Criteria[] filters = queryString.entrySet().stream()
                 .filter(e -> !EXCLUDE_FILTER_PARAMETERS.contains(e.getKey()))
                 .sorted(Entry.comparingByKey())
-                .map(e -> {
-                    Object value;
-                    var bValue = BooleanUtils.toBooleanObject(e.getValue());
-                    if (bValue != null) {
-                        value = bValue;
-                    } else if (NumberUtils.isCreatable(e.getValue())) {
-                        value = NumberUtils.createNumber(e.getValue());
-                    } else {
-                        value = (e.getValue() != null && !e.getValue().isBlank())
-                                ? e.getValue() : Boolean.TRUE;
-                    }
-                    return Criteria.property(e.getKey()).eq(value);
-                }).toArray(Criteria[]::new);
+                .map(e -> parseCriterionParameter(e.getKey(), e.getValue()))
+                .toArray(Criteria[]::new);
 
         return PageRequest.of(
                 Pagination.of(page, perPage, sort),
@@ -111,6 +103,36 @@ public class PageRequestFormatter {
 
     public static PageRequest parse(String queryString) {
         return parse(queryStringToMap(queryString));
+    }
+
+    public static Criteria parseCriterionParameter(String key, String paramValue) {
+        String tmp = paramValue;
+
+        // Parse operation
+        BiFunction<CriterionProperty, Object, Criteria> operation = CriterionProperty::eq;
+        if (!StringUtils.isBlank(tmp)) {
+            if (tmp.charAt(0) == '^') {
+                tmp = tmp.substring(1);
+                operation = CriterionProperty::startWith;
+            } else if (tmp.charAt(tmp.length() - 1) == '$') {
+                tmp = tmp.substring(0, tmp.length() - 1);
+                operation = CriterionProperty::endWith;
+            }
+        }
+
+        // Parse value type
+        Object value;
+        var bValue = BooleanUtils.toBooleanObject(tmp);
+        if (bValue != null) {
+            value = bValue;
+        } else if (NumberUtils.isCreatable(tmp)) {
+            value = NumberUtils.createNumber(tmp);
+        } else {
+            value = (tmp != null && !tmp.isBlank())
+                    ? tmp : Boolean.TRUE;
+        }
+
+        return operation.apply(Criteria.property(key), value);
     }
 
     public static Sort parseSortParameter(String value) {

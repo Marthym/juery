@@ -54,4 +54,16 @@ public class QueryStringFilterVisitor implements Criteria.Visitor<String> {
     public <T> String visitValue(CriterionValue<T> value) {
         return URLEncoder.encode(value.value.toString(), StandardCharsets.UTF_8);
     }
+
+    @Override
+    public <T> String visitStartWith(StartWithOperation<T> operation) {
+        return URLEncoder.encode(operation.field.property, StandardCharsets.UTF_8) + "="
+                + URLEncoder.encode("^", StandardCharsets.UTF_8) + operation.value.visit(this);
+    }
+
+    @Override
+    public <T> String visitEndWith(EndWithOperation<T> operation) {
+        return URLEncoder.encode(operation.field.property, StandardCharsets.UTF_8) + "="
+                + operation.value.visit(this) + URLEncoder.encode("$", StandardCharsets.UTF_8);
+    }
 }

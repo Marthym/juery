@@ -58,6 +58,16 @@ public class JooqConditionVisitor implements Criteria.Visitor<Condition> {
     }
 
     @Override
+    public <T> Condition visitStartWith(StartWithOperation<T> operation) {
+        return readFieldToCondition(operation, Field::startsWith);
+    }
+
+    @Override
+    public <T> Condition visitEndWith(EndWithOperation<T> operation) {
+        return readFieldToCondition(operation, Field::endsWith);
+    }
+
+    @Override
     public <T> Condition visitGreaterThan(GreaterThanOperation<T> operation) {
         return readFieldToCondition(operation, Field::gt);
     }

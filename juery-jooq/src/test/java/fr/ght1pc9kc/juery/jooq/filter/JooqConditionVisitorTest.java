@@ -25,6 +25,7 @@ class JooqConditionVisitorTest {
         assertThat(actual).isEqualTo(expected);
     }
 
+    @SuppressWarnings("unused")
     private static Stream<Arguments> provideSCriteria() {
         return Stream.of(
                 Arguments.of(Criteria.property("title").eq("Obiwan")
@@ -34,7 +35,9 @@ class JooqConditionVisitorTest {
                                 NEWS_PUBLICATION.gt(LocalDateTime.parse("2020-12-11T10:20:42"))
                                         .or(NEWS_PUBLICATION.lt(LocalDateTime.parse("2020-12-11T10:20:42"))))),
                 Arguments.of(Criteria.property("id").in("1", "2", "3", "4", "42"),
-                        NEWS_ID.in("1", "2", "3", "4", "42"))
+                        NEWS_ID.in("1", "2", "3", "4", "42")),
+                Arguments.of(Criteria.property("id").startWith("42"), NEWS_ID.startsWith("42")),
+                Arguments.of(Criteria.property("id").endWith("42"), NEWS_ID.endsWith("42"))
         );
     }
 }
