@@ -124,6 +124,7 @@ public class PageRequestFormatter {
                     tmp = tmp.substring(1);
                     operation = CriterionProperty::contains;
                     break;
+                default:
             }
         }
 
