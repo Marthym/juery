@@ -34,13 +34,16 @@ class PageRequestFormatterTest {
                                 "profile", "jedi",
                                 "job", "master",
                                 "firstname", "^Obiwan",
-                                "lastname", "Kenobi$"),
+                                "lastname", "$Kenobi",
+                                "name", "∋biwan"
+                        ),
                         PageRequest.of(
                                 Pagination.of(2, 100,
                                         Sort.of(new Order(Direction.ASC, "name"), new Order(Direction.DESC, "email"))),
                                 Criteria.property("job").eq("master").and(Criteria.property("profile").eq("jedi"))
                                         .and(Criteria.property("firstname").startWith("Obiwan"))
-                                        .and(Criteria.property("lastname").endWith("Kenobi")))),
+                                        .and(Criteria.property("lastname").endWith("Kenobi"))
+                                        .and(Criteria.property("name").contains("biwan")))),
                 Arguments.of(
                         Map.of("_pp", "200"),
                         PageRequest.of(
@@ -100,7 +103,13 @@ class PageRequestFormatterTest {
                         "name",
                         PageRequest.of(
                                 Pagination.of(0, 100),
-                                Criteria.property("name").eq(true)))
+                                Criteria.property("name").eq(true))),
+                Arguments.of("name=%5EObiwan", PageRequest.of(
+                        Pagination.of(0, 100),
+                        Criteria.property("name").startWith("Obiwan"))),
+                Arguments.of("name=%E2%88%8Bbiwa", PageRequest.of(
+                        Pagination.of(0, 100),
+                        Criteria.property("name").contains("biwa")))
         );
     }
 

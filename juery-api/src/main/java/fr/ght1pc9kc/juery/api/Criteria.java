@@ -103,6 +103,10 @@ public interface Criteria {
             throw new IllegalStateException("END_WITH operation not implemented in visitor");
         }
 
+        default <T> R visitContains(ContainsOperation<T> operation) {
+            throw new IllegalStateException("CONTAINS operation not implemented in visitor");
+        }
+
         default <T> R visitIn(InOperation<T> operation) {
             throw new IllegalStateException("IN operation not implemented in visitor");
         }

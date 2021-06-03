@@ -37,7 +37,8 @@ class JooqConditionVisitorTest {
                 Arguments.of(Criteria.property("id").in("1", "2", "3", "4", "42"),
                         NEWS_ID.in("1", "2", "3", "4", "42")),
                 Arguments.of(Criteria.property("id").startWith("42"), NEWS_ID.startsWith("42")),
-                Arguments.of(Criteria.property("id").endWith("42"), NEWS_ID.endsWith("42"))
+                Arguments.of(Criteria.property("id").endWith("42"), NEWS_ID.endsWith("42")),
+                Arguments.of(Criteria.property("id").contains("42"), NEWS_ID.contains("42"))
         );
     }
 }

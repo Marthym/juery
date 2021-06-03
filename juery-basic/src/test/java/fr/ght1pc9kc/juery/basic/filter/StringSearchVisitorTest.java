@@ -19,6 +19,7 @@ class StringSearchVisitorTest {
         assertThat(actual).isEqualTo(expected);
     }
 
+    @SuppressWarnings("unused")
     private static Stream<Arguments> provideSCriteria() {
         return Stream.of(
                 Arguments.of(Criteria.property("jedi").eq("Obiwan")
@@ -32,8 +33,9 @@ class StringSearchVisitorTest {
                                 .or(Criteria.property("age").lt(20)),
                         "((not (faction = 'sith') and age > 40) or age < 20)"),
                 Arguments.of(Criteria.property("faction").startWith("sith")
-                                .and(Criteria.property("name").endWith("Kenobi")),
-                        "(faction =~ '^sith.*' and name =~ '.*Kenobi$')"),
+                                .and(Criteria.property("name").endWith("Kenobi"))
+                                .and(Criteria.property("firstname").contains("biw")),
+                        "(faction =~ '^sith.*' and name =~ '.*Kenobi$' and firstname =~ '.*biw.*')"),
                 Arguments.of(Criteria.none(), "")
         );
     }

@@ -70,4 +70,9 @@ public class ListPropertiesCriteriaVisitor implements Criteria.Visitor<List<Stri
     public <T> List<String> visitEndWith(EndWithOperation<T> operation) {
         return List.of(operation.field.property);
     }
+
+    @Override
+    public <T> List<String> visitContains(ContainsOperation<T> operation) {
+        return List.of(operation.field.property);
+    }
 }
