@@ -53,4 +53,8 @@ public class CriterionProperty {
     public <T> Criteria endWith(T value) {
         return new EndWithOperation<>(this, new CriterionValue<>(value));
     }
+
+    public <T> Criteria contains(T value) {
+        return new ContainsOperation<>(this, new CriterionValue<>(value));
+    }
 }

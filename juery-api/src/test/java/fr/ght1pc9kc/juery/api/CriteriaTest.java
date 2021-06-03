@@ -1,9 +1,6 @@
 package fr.ght1pc9kc.juery.api;
 
-import fr.ght1pc9kc.juery.api.filter.AndOperation;
-import fr.ght1pc9kc.juery.api.filter.EndWithOperation;
-import fr.ght1pc9kc.juery.api.filter.OrOperation;
-import fr.ght1pc9kc.juery.api.filter.StartWithOperation;
+import fr.ght1pc9kc.juery.api.filter.*;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -154,5 +151,13 @@ class CriteriaTest {
         Criteria actualEndWith = Criteria.property("name").endWith("Kenobi");
         Assertions.assertThat(actualEndWith).isInstanceOf(EndWithOperation.class);
         Assertions.assertThat(((EndWithOperation<String>) actualEndWith).value.value).isEqualTo("Kenobi");
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void should_create_contains_operation() {
+        Criteria actual = Criteria.property("name").contains("Obiwan");
+        Assertions.assertThat(actual).isInstanceOf(ContainsOperation.class);
+        Assertions.assertThat(((ContainsOperation<String>) actual).value.value).isEqualTo("Obiwan");
     }
 }
