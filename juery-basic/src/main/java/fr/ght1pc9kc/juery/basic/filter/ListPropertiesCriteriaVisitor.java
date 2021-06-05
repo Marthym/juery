@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  * <p>
  * Useful to check allowed filters.
  */
-public class ListPropertiesCriteriaVisitor implements Criteria.Visitor<List<String>> {
+public class ListPropertiesCriteriaVisitor implements CriteriaVisitor<List<String>> {
     @Override
     public List<String> visitNoCriteria(NoCriterion none) {
         return List.of();

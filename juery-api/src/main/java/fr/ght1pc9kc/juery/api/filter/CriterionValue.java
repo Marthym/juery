@@ -24,7 +24,7 @@ public class CriterionValue<T> implements Criteria {
     }
 
     @Override
-    public <R> R accept(Visitor<R> visitor) {
+    public <R> R accept(CriteriaVisitor<R> visitor) {
         return visitor.visitValue(this);
     }
 }

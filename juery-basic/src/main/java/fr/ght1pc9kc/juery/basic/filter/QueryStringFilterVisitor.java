@@ -1,13 +1,12 @@
 package fr.ght1pc9kc.juery.basic.filter;
 
-import fr.ght1pc9kc.juery.api.Criteria;
 import fr.ght1pc9kc.juery.api.filter.*;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
-public class QueryStringFilterVisitor implements Criteria.Visitor<String> {
+public class QueryStringFilterVisitor implements CriteriaVisitor<String> {
 
     private static final String ENCODED_START_CHAR = URLEncoder.encode("^", StandardCharsets.UTF_8);
     private static final String ENCODED_END_CHAR = URLEncoder.encode("$", StandardCharsets.UTF_8);

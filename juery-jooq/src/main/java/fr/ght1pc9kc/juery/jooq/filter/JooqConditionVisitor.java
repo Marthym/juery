@@ -1,6 +1,5 @@
 package fr.ght1pc9kc.juery.jooq.filter;
 
-import fr.ght1pc9kc.juery.api.Criteria;
 import fr.ght1pc9kc.juery.api.filter.*;
 import lombok.AllArgsConstructor;
 import org.jooq.Condition;
@@ -13,7 +12,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 @AllArgsConstructor
-public class JooqConditionVisitor implements Criteria.Visitor<Condition> {
+public class JooqConditionVisitor implements CriteriaVisitor<Condition> {
 
     private final Function<String, Field<?>> propertiesSupplier;
 

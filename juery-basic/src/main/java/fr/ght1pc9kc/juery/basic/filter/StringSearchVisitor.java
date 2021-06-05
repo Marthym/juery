@@ -1,11 +1,10 @@
 package fr.ght1pc9kc.juery.basic.filter;
 
-import fr.ght1pc9kc.juery.api.Criteria;
 import fr.ght1pc9kc.juery.api.filter.*;
 
 import java.util.stream.Collectors;
 
-public class StringSearchVisitor implements Criteria.Visitor<String> {
+public class StringSearchVisitor implements CriteriaVisitor<String> {
     @Override
     public String visitNoCriteria(NoCriterion none) {
         return "";

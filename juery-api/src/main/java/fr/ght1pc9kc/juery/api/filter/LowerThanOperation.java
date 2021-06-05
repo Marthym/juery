@@ -11,7 +11,7 @@ public class LowerThanOperation<T> extends BiOperand<T> {
     }
 
     @Override
-    public <R> R accept(Visitor<R> visitor) {
+    public <R> R accept(CriteriaVisitor<R> visitor) {
         return visitor.visitLowerThan(this);
     }
 }

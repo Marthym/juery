@@ -13,7 +13,7 @@ public class InOperation<T> extends BiOperand<Collection<T>> {
     }
 
     @Override
-    public <R> R accept(Visitor<R> visitor) {
+    public <R> R accept(CriteriaVisitor<R> visitor) {
         return visitor.visitIn(this);
     }
 }
