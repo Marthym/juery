@@ -49,7 +49,7 @@ public class PageRequestFormatter {
             qs.append(DEFAULT_SORT_PARAMETER + "=").append(formatSortValue(pr.pagination().sort())).append('&');
         }
         if (!pr.filter().isEmpty()) {
-            qs.append(pr.filter().visit(CRITERIA_FORMATTER));
+            qs.append(pr.filter().accept(CRITERIA_FORMATTER));
         }
         if (qs.length() == 0) {
             return "";

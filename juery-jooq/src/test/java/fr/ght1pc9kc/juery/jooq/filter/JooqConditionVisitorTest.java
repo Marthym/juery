@@ -21,7 +21,7 @@ class JooqConditionVisitorTest {
     @ParameterizedTest
     @MethodSource("provideSCriteria")
     void should_create_condition_from_criteria(Criteria criteria, Condition expected) {
-        Condition actual = criteria.visit(tested);
+        Condition actual = criteria.accept(tested);
         assertThat(actual).isEqualTo(expected);
     }
 

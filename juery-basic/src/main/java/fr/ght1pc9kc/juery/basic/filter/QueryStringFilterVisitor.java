@@ -21,7 +21,7 @@ public class QueryStringFilterVisitor implements Criteria.Visitor<String> {
     @Override
     public String visitAnd(AndOperation operation) {
         return operation.andCriteria.stream()
-                .map(a -> a.visit(this))
+                .map(a -> a.accept(this))
                 .collect(Collectors.joining("&"));
     }
 
@@ -37,7 +37,7 @@ public class QueryStringFilterVisitor implements Criteria.Visitor<String> {
 
     @Override
     public <T> String visitEqual(EqualOperation<T> operation) {
-        return URLEncoder.encode(operation.field.property, StandardCharsets.UTF_8) + "=" + operation.value.visit(this);
+        return URLEncoder.encode(operation.field.property, StandardCharsets.UTF_8) + "=" + operation.value.accept(this);
     }
 
     @Override
@@ -63,18 +63,18 @@ public class QueryStringFilterVisitor implements Criteria.Visitor<String> {
     @Override
     public <T> String visitStartWith(StartWithOperation<T> operation) {
         return URLEncoder.encode(operation.field.property, StandardCharsets.UTF_8) + "="
-                + ENCODED_START_CHAR + operation.value.visit(this);
+                + ENCODED_START_CHAR + operation.value.accept(this);
     }
 
     @Override
     public <T> String visitEndWith(EndWithOperation<T> operation) {
         return URLEncoder.encode(operation.field.property, StandardCharsets.UTF_8) + "="
-                + ENCODED_END_CHAR + operation.value.visit(this);
+                + ENCODED_END_CHAR + operation.value.accept(this);
     }
 
     @Override
     public <T> String visitContains(ContainsOperation<T> operation) {
         return URLEncoder.encode(operation.field.property, StandardCharsets.UTF_8) + "="
-                + ENCODED_CONTAINS_CHAR + operation.value.visit(this);
+                + ENCODED_CONTAINS_CHAR + operation.value.accept(this);
     }
 }

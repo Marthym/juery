@@ -78,7 +78,7 @@ public interface Criteria {
 
     boolean isEmpty();
 
-    <R> R visit(Visitor<R> visitor);
+    <R> R accept(Visitor<R> visitor);
 
     interface Visitor<R> {
         R visitNoCriteria(NoCriterion none);

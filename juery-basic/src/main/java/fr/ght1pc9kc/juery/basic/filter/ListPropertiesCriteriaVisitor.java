@@ -23,20 +23,20 @@ public class ListPropertiesCriteriaVisitor implements Criteria.Visitor<List<Stri
     @Override
     public List<String> visitAnd(AndOperation operation) {
         return operation.andCriteria.stream()
-                .flatMap(a -> a.visit(this).stream())
+                .flatMap(a -> a.accept(this).stream())
                 .distinct()
                 .collect(Collectors.toUnmodifiableList());
     }
 
     @Override
     public List<String> visitNot(NotOperation operation) {
-        return operation.negative.visit(this);
+        return operation.negative.accept(this);
     }
 
     @Override
     public List<String> visitOr(OrOperation operation) {
         return operation.orCriteria.stream()
-                .flatMap(a -> a.visit(this).stream())
+                .flatMap(a -> a.accept(this).stream())
                 .distinct()
                 .collect(Collectors.toUnmodifiableList());
     }

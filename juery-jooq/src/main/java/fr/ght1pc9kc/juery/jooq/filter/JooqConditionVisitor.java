@@ -29,20 +29,20 @@ public class JooqConditionVisitor implements Criteria.Visitor<Condition> {
     @Override
     public Condition visitAnd(AndOperation operation) {
         Condition[] conditions = operation.andCriteria.stream()
-                .map(a -> a.visit(this))
+                .map(a -> a.accept(this))
                 .toArray(Condition[]::new);
         return DSL.and(conditions);
     }
 
     @Override
     public Condition visitNot(NotOperation operation) {
-        return DSL.not(operation.negative.visit(this));
+        return DSL.not(operation.negative.accept(this));
     }
 
     @Override
     public Condition visitOr(OrOperation operation) {
         Condition[] conditions = operation.orCriteria.stream()
-                .map(o -> o.visit(this))
+                .map(o -> o.accept(this))
                 .toArray(Condition[]::new);
         return DSL.or(conditions);
     }

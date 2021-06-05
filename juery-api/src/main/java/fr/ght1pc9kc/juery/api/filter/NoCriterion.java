@@ -15,7 +15,7 @@ public class NoCriterion implements Criteria {
     }
 
     @Override
-    public <R> R visit(Visitor<R> visitor) {
+    public <R> R accept(Visitor<R> visitor) {
         return visitor.visitNoCriteria(this);
     }
 }

@@ -15,7 +15,7 @@ class StringSearchVisitorTest {
     @ParameterizedTest
     @MethodSource(value = "provideSCriteria")
     void should_consume_criteria_as_string(Criteria criteria, String expected) {
-        String actual = criteria.visit(tested);
+        String actual = criteria.accept(tested);
         assertThat(actual).isEqualTo(expected);
     }
 

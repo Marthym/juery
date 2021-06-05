@@ -17,7 +17,7 @@ class ListPropertiesCriteriaVisitorTest {
     @ParameterizedTest
     @MethodSource(value = "provideSCriteria")
     void should_consume_criteria_as_string(Criteria criteria, List<String> expected) {
-        List<String> actual = criteria.visit(tested);
+        List<String> actual = criteria.accept(tested);
         assertThat(actual).isEqualTo(expected);
     }
 
