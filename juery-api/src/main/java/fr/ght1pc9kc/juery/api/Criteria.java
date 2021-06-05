@@ -8,6 +8,17 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * The main class to use <strong>Juery</strong>
+ *
+ * Some examples:
+ *
+ * <pre>{@code
+ * Criteria.property("jedi").eq("Obiwan")
+ *     .and(Criteria.property("age").gt(40)
+ *     .or(Criteria.property("age").lt(20)));
+ * }</pre>
+ */
 public interface Criteria {
 
     static NoCriterion none() {
