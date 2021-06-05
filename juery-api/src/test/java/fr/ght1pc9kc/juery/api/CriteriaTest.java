@@ -1,7 +1,6 @@
 package fr.ght1pc9kc.juery.api;
 
-import fr.ght1pc9kc.juery.api.filter.AndOperation;
-import fr.ght1pc9kc.juery.api.filter.OrOperation;
+import fr.ght1pc9kc.juery.api.filter.*;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -140,5 +139,25 @@ class CriteriaTest {
                 Criteria.property("faction").eq("jedi"),
                 Criteria.property("age").lt(57)
         ));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void should_create_startend_with_operation() {
+        Criteria actualStartWith = Criteria.property("name").startWith("Obiwan");
+        Assertions.assertThat(actualStartWith).isInstanceOf(StartWithOperation.class);
+        Assertions.assertThat(((StartWithOperation<String>) actualStartWith).value.value).isEqualTo("Obiwan");
+
+        Criteria actualEndWith = Criteria.property("name").endWith("Kenobi");
+        Assertions.assertThat(actualEndWith).isInstanceOf(EndWithOperation.class);
+        Assertions.assertThat(((EndWithOperation<String>) actualEndWith).value.value).isEqualTo("Kenobi");
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void should_create_contains_operation() {
+        Criteria actual = Criteria.property("name").contains("Obiwan");
+        Assertions.assertThat(actual).isInstanceOf(ContainsOperation.class);
+        Assertions.assertThat(((ContainsOperation<String>) actual).value.value).isEqualTo("Obiwan");
     }
 }

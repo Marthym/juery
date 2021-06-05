@@ -1,13 +1,17 @@
 package fr.ght1pc9kc.juery.basic.filter;
 
-import fr.ght1pc9kc.juery.api.Criteria;
 import fr.ght1pc9kc.juery.api.filter.*;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
-public class QueryStringFilterVisitor implements Criteria.Visitor<String> {
+public class QueryStringFilterVisitor implements CriteriaVisitor<String> {
+
+    private static final String ENCODED_START_CHAR = URLEncoder.encode("^", StandardCharsets.UTF_8);
+    private static final String ENCODED_END_CHAR = URLEncoder.encode("$", StandardCharsets.UTF_8);
+    private static final String ENCODED_CONTAINS_CHAR = URLEncoder.encode("∋", StandardCharsets.UTF_8);
+
     @Override
     public String visitNoCriteria(NoCriterion none) {
         return "";
@@ -16,7 +20,7 @@ public class QueryStringFilterVisitor implements Criteria.Visitor<String> {
     @Override
     public String visitAnd(AndOperation operation) {
         return operation.andCriteria.stream()
-                .map(a -> a.visit(this))
+                .map(a -> a.accept(this))
                 .collect(Collectors.joining("&"));
     }
 
@@ -32,7 +36,7 @@ public class QueryStringFilterVisitor implements Criteria.Visitor<String> {
 
     @Override
     public <T> String visitEqual(EqualOperation<T> operation) {
-        return URLEncoder.encode(operation.field.property, StandardCharsets.UTF_8) + "=" + operation.value.visit(this);
+        return URLEncoder.encode(operation.field.property, StandardCharsets.UTF_8) + "=" + operation.value.accept(this);
     }
 
     @Override
@@ -53,5 +57,23 @@ public class QueryStringFilterVisitor implements Criteria.Visitor<String> {
     @Override
     public <T> String visitValue(CriterionValue<T> value) {
         return URLEncoder.encode(value.value.toString(), StandardCharsets.UTF_8);
+    }
+
+    @Override
+    public <T> String visitStartWith(StartWithOperation<T> operation) {
+        return URLEncoder.encode(operation.field.property, StandardCharsets.UTF_8) + "="
+                + ENCODED_START_CHAR + operation.value.accept(this);
+    }
+
+    @Override
+    public <T> String visitEndWith(EndWithOperation<T> operation) {
+        return URLEncoder.encode(operation.field.property, StandardCharsets.UTF_8) + "="
+                + ENCODED_END_CHAR + operation.value.accept(this);
+    }
+
+    @Override
+    public <T> String visitContains(ContainsOperation<T> operation) {
+        return URLEncoder.encode(operation.field.property, StandardCharsets.UTF_8) + "="
+                + ENCODED_CONTAINS_CHAR + operation.value.accept(this);
     }
 }

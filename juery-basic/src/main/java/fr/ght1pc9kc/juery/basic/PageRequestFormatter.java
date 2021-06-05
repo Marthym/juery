@@ -2,11 +2,14 @@ package fr.ght1pc9kc.juery.basic;
 
 import fr.ght1pc9kc.juery.api.Criteria;
 import fr.ght1pc9kc.juery.api.PageRequest;
+import fr.ght1pc9kc.juery.api.Pagination;
+import fr.ght1pc9kc.juery.api.filter.CriterionProperty;
 import fr.ght1pc9kc.juery.api.pagination.Direction;
 import fr.ght1pc9kc.juery.api.pagination.Order;
 import fr.ght1pc9kc.juery.api.pagination.Sort;
 import fr.ght1pc9kc.juery.basic.common.lang3.BooleanUtils;
 import fr.ght1pc9kc.juery.basic.common.lang3.NumberUtils;
+import fr.ght1pc9kc.juery.basic.common.lang3.StringUtils;
 import fr.ght1pc9kc.juery.basic.filter.QueryStringFilterVisitor;
 import lombok.experimental.UtilityClass;
 
@@ -18,6 +21,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import static java.util.function.Predicate.not;
@@ -35,17 +39,17 @@ public class PageRequestFormatter {
 
     public static String formatPageRequest(PageRequest pr) {
         var qs = new StringBuilder();
-        if (pr.page > 0) {
-            qs.append(DEFAULT_PAGE_PARAMETER + "=").append(pr.page).append('&');
+        if (pr.pagination().page() > 0) {
+            qs.append(DEFAULT_PAGE_PARAMETER + "=").append(pr.pagination().page()).append('&');
         }
-        if (pr.size < MAX_PAGE_SIZE) {
-            qs.append(DEFAULT_SORT_PARAMETER + "=").append(pr.size).append('&');
+        if (pr.pagination().size() < MAX_PAGE_SIZE) {
+            qs.append(DEFAULT_SORT_PARAMETER + "=").append(pr.pagination().size()).append('&');
         }
-        if (!pr.sort.equals(Sort.of())) {
-            qs.append(DEFAULT_SORT_PARAMETER + "=").append(formatSortValue(pr.sort)).append('&');
+        if (!pr.pagination().sort().equals(Sort.of())) {
+            qs.append(DEFAULT_SORT_PARAMETER + "=").append(formatSortValue(pr.pagination().sort())).append('&');
         }
-        if (!pr.filter.isEmpty()) {
-            qs.append(pr.filter.visit(CRITERIA_FORMATTER));
+        if (!pr.filter().isEmpty()) {
+            qs.append(pr.filter().accept(CRITERIA_FORMATTER));
         }
         if (qs.length() == 0) {
             return "";
@@ -59,11 +63,11 @@ public class PageRequestFormatter {
 
     public static String formatSortValue(Sort sort) {
         var qs = new StringBuilder();
-        for (Order order : sort.getOrders()) {
-            if (order.getDirection() == Direction.DESC) {
+        for (Order order : sort.orders()) {
+            if (order.direction() == Direction.DESC) {
                 qs.append('-');
             }
-            qs.append(URLEncoder.encode(order.getProperty(), StandardCharsets.UTF_8));
+            qs.append(URLEncoder.encode(order.property(), StandardCharsets.UTF_8));
             qs.append(',');
         }
         qs.setLength(qs.length() - 1);
@@ -88,30 +92,55 @@ public class PageRequestFormatter {
         Criteria[] filters = queryString.entrySet().stream()
                 .filter(e -> !EXCLUDE_FILTER_PARAMETERS.contains(e.getKey()))
                 .sorted(Entry.comparingByKey())
-                .map(e -> {
-                    Object value;
-                    var bValue = BooleanUtils.toBooleanObject(e.getValue());
-                    if (bValue != null) {
-                        value = bValue;
-                    } else if (NumberUtils.isCreatable(e.getValue())) {
-                        value = NumberUtils.createNumber(e.getValue());
-                    } else {
-                        value = (e.getValue() != null && !e.getValue().isBlank())
-                                ? e.getValue() : Boolean.TRUE;
-                    }
-                    return Criteria.property(e.getKey()).eq(value);
-                }).toArray(Criteria[]::new);
+                .map(e -> parseCriterionParameter(e.getKey(), e.getValue()))
+                .toArray(Criteria[]::new);
 
-        return PageRequest.builder()
-                .page(page)
-                .size(perPage)
-                .sort(sort)
-                .filter(Criteria.and(filters))
-                .build();
+        return PageRequest.of(
+                Pagination.of(page, perPage, sort),
+                Criteria.and(filters)
+        );
     }
 
     public static PageRequest parse(String queryString) {
         return parse(queryStringToMap(queryString));
+    }
+
+    public static Criteria parseCriterionParameter(String key, String paramValue) {
+        String tmp = paramValue;
+
+        // Parse operation
+        BiFunction<CriterionProperty, Object, Criteria> operation = CriterionProperty::eq;
+        if (!StringUtils.isBlank(tmp)) {
+            switch (tmp.charAt(0)) {
+                case '^':
+                    tmp = tmp.substring(1);
+                    operation = CriterionProperty::startWith;
+                    break;
+                case '$':
+                    tmp = tmp.substring(1);
+                    operation = CriterionProperty::endWith;
+                    break;
+                case '∋':
+                    tmp = tmp.substring(1);
+                    operation = CriterionProperty::contains;
+                    break;
+                default:
+            }
+        }
+
+        // Parse value type
+        Object value;
+        var bValue = BooleanUtils.toBooleanObject(tmp);
+        if (bValue != null) {
+            value = bValue;
+        } else if (NumberUtils.isCreatable(tmp)) {
+            value = NumberUtils.createNumber(tmp);
+        } else {
+            value = (tmp != null && !tmp.isBlank())
+                    ? tmp : Boolean.TRUE;
+        }
+
+        return operation.apply(Criteria.property(key), value);
     }
 
     public static Sort parseSortParameter(String value) {

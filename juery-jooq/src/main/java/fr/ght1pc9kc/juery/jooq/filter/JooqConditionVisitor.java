@@ -1,6 +1,5 @@
 package fr.ght1pc9kc.juery.jooq.filter;
 
-import fr.ght1pc9kc.juery.api.Criteria;
 import fr.ght1pc9kc.juery.api.filter.*;
 import lombok.AllArgsConstructor;
 import org.jooq.Condition;
@@ -13,7 +12,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 @AllArgsConstructor
-public class JooqConditionVisitor implements Criteria.Visitor<Condition> {
+public class JooqConditionVisitor implements CriteriaVisitor<Condition> {
 
     private final Function<String, Field<?>> propertiesSupplier;
 
@@ -29,20 +28,20 @@ public class JooqConditionVisitor implements Criteria.Visitor<Condition> {
     @Override
     public Condition visitAnd(AndOperation operation) {
         Condition[] conditions = operation.andCriteria.stream()
-                .map(a -> a.visit(this))
+                .map(a -> a.accept(this))
                 .toArray(Condition[]::new);
         return DSL.and(conditions);
     }
 
     @Override
     public Condition visitNot(NotOperation operation) {
-        return DSL.not(operation.negative.visit(this));
+        return DSL.not(operation.negative.accept(this));
     }
 
     @Override
     public Condition visitOr(OrOperation operation) {
         Condition[] conditions = operation.orCriteria.stream()
-                .map(o -> o.visit(this))
+                .map(o -> o.accept(this))
                 .toArray(Condition[]::new);
         return DSL.or(conditions);
     }
@@ -55,6 +54,21 @@ public class JooqConditionVisitor implements Criteria.Visitor<Condition> {
     @Override
     public <T> Condition visitEqual(EqualOperation<T> operation) {
         return readFieldToCondition(operation, Field::eq);
+    }
+
+    @Override
+    public <T> Condition visitStartWith(StartWithOperation<T> operation) {
+        return readFieldToCondition(operation, Field::startsWith);
+    }
+
+    @Override
+    public <T> Condition visitEndWith(EndWithOperation<T> operation) {
+        return readFieldToCondition(operation, Field::endsWith);
+    }
+
+    @Override
+    public <T> Condition visitContains(ContainsOperation<T> operation) {
+        return readFieldToCondition(operation, Field::contains);
     }
 
     @Override

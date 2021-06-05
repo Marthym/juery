@@ -8,13 +8,24 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * The main class to use <strong>Juery</strong>
+ *
+ * Some examples:
+ *
+ * <pre>{@code
+ * Criteria.property("jedi").eq("Obiwan")
+ *     .and(Criteria.property("age").gt(40)
+ *     .or(Criteria.property("age").lt(20)));
+ * }</pre>
+ */
 public interface Criteria {
 
-    public static NoCriterion none() {
+    static NoCriterion none() {
         return NoCriterion.NO_CRITERION;
     }
 
-    public static Criteria and(Criteria... andCriteria) {
+    static Criteria and(Criteria... andCriteria) {
         List<Criteria> filtered = Arrays.stream(andCriteria)
                 .filter(Predicate.not(Criteria::isEmpty))
                 .flatMap(a -> {
@@ -34,7 +45,7 @@ public interface Criteria {
         return new AndOperation(filtered);
     }
 
-    public static Criteria or(Criteria... orCriteria) {
+    static Criteria or(Criteria... orCriteria) {
         List<Criteria> filtered = Arrays.stream(orCriteria)
                 .filter(Predicate.not(Criteria::isEmpty))
                 .flatMap(a -> {
@@ -54,7 +65,7 @@ public interface Criteria {
         return new OrOperation(filtered);
     }
 
-    public static Criteria not(Criteria criteria) {
+    static Criteria not(Criteria criteria) {
         if (criteria.isEmpty()) {
             return criteria;
         }
@@ -64,7 +75,7 @@ public interface Criteria {
         return new NotOperation(criteria);
     }
 
-    public static CriterionProperty property(String property) {
+    static CriterionProperty property(String property) {
         return new CriterionProperty(property);
     }
 
@@ -76,31 +87,7 @@ public interface Criteria {
         return or(this, right);
     }
 
-    public abstract boolean isEmpty();
+    boolean isEmpty();
 
-    public abstract <R> R visit(Visitor<R> visitor);
-
-    public interface Visitor<R> {
-        R visitNoCriteria(NoCriterion none);
-
-        R visitAnd(AndOperation operation);
-
-        R visitNot(NotOperation operation);
-
-        R visitOr(OrOperation operation);
-
-        <T> R visitEqual(EqualOperation<T> operation);
-
-        <T> R visitGreaterThan(GreaterThanOperation<T> operation);
-
-        <T> R visitLowerThan(LowerThanOperation<T> operation);
-
-        default <T> R visitIn(InOperation<T> operation) {
-            throw new IllegalStateException("IN operation not implemented in visitor");
-        }
-
-        default <T> R visitValue(CriterionValue<T> value) {
-            throw new IllegalStateException("Value not implemented in visitor");
-        }
-    }
+    <R> R accept(CriteriaVisitor<R> visitor);
 }

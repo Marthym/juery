@@ -15,7 +15,7 @@ public class NotOperation implements Criteria {
     }
 
     @Override
-    public <R> R visit(Visitor<R> visitor) {
+    public <R> R accept(CriteriaVisitor<R> visitor) {
         return visitor.visitNot(this);
     }
 }

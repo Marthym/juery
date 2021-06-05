@@ -5,14 +5,14 @@ import lombok.Value;
 
 @Value
 @EqualsAndHashCode(callSuper = true)
-public class EqualOperation<T> extends BiOperand<T> {
-    public EqualOperation(CriterionProperty criteria, CriterionValue<T> value) {
+public class ContainsOperation<T> extends BiOperand<T> {
+    public ContainsOperation(CriterionProperty criteria, CriterionValue<T> value) {
         super(criteria, value);
     }
 
     @Override
     public <R> R accept(CriteriaVisitor<R> visitor) {
-        return visitor.visitEqual(this);
+        return visitor.visitContains(this);
     }
 
     @Override
