@@ -17,6 +17,7 @@ class QueryStringFilterVisitorTest {
         assertThat(Criteria.property("name").startWith("Obiwan")
                 .and(Criteria.property("faction").endWith("jedi")).accept(tested)).isEqualTo("name=%5EObiwan&faction=%24jedi");
         assertThat(Criteria.property("name").contains("Obiwan").accept(tested)).isEqualTo("name=%E2%88%8BObiwan");
+        assertThat(Criteria.property("id").in(42, 24).accept(tested)).isEqualTo("id=42&id=24");
         assertThat(Criteria.none().accept(tested)).isEmpty();
     }
 
@@ -25,13 +26,11 @@ class QueryStringFilterVisitorTest {
         Criteria obiwan = Criteria.property("name").eq("Obiwan");
         Criteria yoda = Criteria.property("name").eq("Yoda");
         Criteria obiwanOrYoda = obiwan.or(yoda);
-        Criteria nameInObiwanYoda = Criteria.property("name").in("Obiwan", "Yoda");
         Criteria notObiwan = Criteria.not(obiwan);
         Criteria lowerThan = Criteria.property("age").lt(57);
         Criteria greaterThan = Criteria.property("age").gt(57);
 
         assertThatThrownBy(() -> obiwanOrYoda.accept(tested)).isInstanceOf(IllegalStateException.class);
-        assertThatThrownBy(() -> nameInObiwanYoda.accept(tested)).isInstanceOf(IllegalStateException.class);
         assertThatThrownBy(() -> notObiwan.accept(tested)).isInstanceOf(IllegalStateException.class);
         assertThatThrownBy(() -> lowerThan.accept(tested)).isInstanceOf(IllegalStateException.class);
         assertThatThrownBy(() -> greaterThan.accept(tested)).isInstanceOf(IllegalStateException.class);

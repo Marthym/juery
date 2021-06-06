@@ -11,6 +11,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -18,7 +19,7 @@ import java.util.stream.Stream;
 class PageRequestFormatterTest {
     @MethodSource
     @ParameterizedTest
-    void should_parse_page_request_from_map(Map<String, String> queryString, PageRequest expected) {
+    void should_parse_page_request_from_map(Map<String, List<String>> queryString, PageRequest expected) {
         PageRequest actual = PageRequestFormatter.parse(queryString);
 
         Assertions.assertThat(actual).isEqualTo(expected);
@@ -29,13 +30,13 @@ class PageRequestFormatterTest {
         return Stream.of(
                 Arguments.of(
                         Map.of(
-                                "_p", "2",
-                                "_s", "name, -email",
-                                "profile", "jedi",
-                                "job", "master",
-                                "firstname", "^Obiwan",
-                                "lastname", "$Kenobi",
-                                "name", "∋biwan"
+                                "_p", List.of("2"),
+                                "_s", List.of("name, -email"),
+                                "profile", List.of("jedi"),
+                                "job", List.of("master"),
+                                "firstname", List.of("^Obiwan"),
+                                "lastname", List.of("$Kenobi"),
+                                "name", List.of("∋biwan")
                         ),
                         PageRequest.of(
                                 Pagination.of(2, 100,
@@ -45,24 +46,37 @@ class PageRequestFormatterTest {
                                         .and(Criteria.property("lastname").endWith("Kenobi"))
                                         .and(Criteria.property("name").contains("biwan")))),
                 Arguments.of(
-                        Map.of("_pp", "200"),
+                        Map.of("_pp", List.of("200")),
                         PageRequest.of(
                                 Pagination.of(0, 100, Sort.of()),
                                 Criteria.none())),
                 Arguments.of(
                         Map.of(
-                                "_pp", "200",
-                                "name", ""),
+                                "_pp", List.of("200"),
+                                "name", List.of("")),
                         PageRequest.of(
                                 Pagination.of(0, 100, Sort.of()),
-                                Criteria.property("name").eq(true)))
+                                Criteria.property("name").eq(true))),
+                Arguments.of(
+                        Map.of(
+                                "_pp", List.of("200"),
+                                "name", List.of()),
+                        PageRequest.of(
+                                Pagination.of(0, 100, Sort.of()),
+                                Criteria.property("name").eq(true))),
+                Arguments.of(
+                        Map.of("_s", List.of("name", "-email")),
+                        PageRequest.of(
+                                Pagination.of(0, 100,
+                                        Sort.of(new Order(Direction.ASC, "name"), new Order(Direction.DESC, "email"))),
+                                Criteria.none()))
         );
     }
 
     @MethodSource
     @ParameterizedTest
     void should_parse_sort_parameter(String sortValue, Sort expected) {
-        Sort actual = PageRequestFormatter.parseSortParameter(sortValue);
+        Sort actual = PageRequestFormatter.parseSortParameter(List.of(sortValue));
         Assertions.assertThat(actual).isEqualTo(expected);
     }
 
@@ -109,7 +123,11 @@ class PageRequestFormatterTest {
                         Criteria.property("name").startWith("Obiwan"))),
                 Arguments.of("name=%E2%88%8Bbiwa", PageRequest.of(
                         Pagination.of(0, 100),
-                        Criteria.property("name").contains("biwa")))
+                        Criteria.property("name").contains("biwa"))),
+                Arguments.of("id[]=42&id[]=24&name=%5EObiwan", PageRequest.of(
+                        Pagination.of(0, 100),
+                        Criteria.property("id").in(42, 24)
+                                .and(Criteria.property("name").startWith("Obiwan"))))
         );
     }
 
@@ -125,17 +143,16 @@ class PageRequestFormatterTest {
     @SuppressWarnings("unused")
     private static Stream<Arguments> should_format_page_request_to_query_string() {
         return Stream.of(
-                Arguments.of(
-                        "_p=2&_s=name,-email&profile=jedi&job=master",
+                Arguments.of("_p=2&_s=name,-email&profile=jedi&job=master",
                         PageRequest.of(
                                 Pagination.of(2, 100, Sort.of(new Order(Direction.ASC, "name"), new Order(Direction.DESC, "email"))),
                                 Criteria.property("profile").eq("jedi").and(Criteria.property("job").eq("master")))),
-                Arguments.of(
-                        "", PageRequest.of(Pagination.of(0, 100), Criteria.none())),
-                Arguments.of(
-                        "name=true",
-                        PageRequest.of(Pagination.of(0, 100),
-                                Criteria.property("name").eq(true)))
+                Arguments.of("", PageRequest.of(Pagination.of(0, 100), Criteria.none())),
+                Arguments.of("name=true", PageRequest.of(Pagination.of(0, 100),
+                        Criteria.property("name").eq(true))),
+                Arguments.of("id=42&id=24&name=true", PageRequest.of(Pagination.of(0, 100),
+                        Criteria.property("id").in(42, 24)
+                                .and(Criteria.property("name").eq(true))))
         );
     }
 

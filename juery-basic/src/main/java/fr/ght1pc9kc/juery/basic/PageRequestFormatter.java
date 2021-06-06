@@ -16,13 +16,11 @@ import lombok.experimental.UtilityClass;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.function.Predicate.not;
 
@@ -74,14 +72,16 @@ public class PageRequestFormatter {
         return qs.toString();
     }
 
-    public static PageRequest parse(Map<String, String> queryString) {
+    public static PageRequest parse(Map<String, List<String>> queryString) {
         if (queryString == null || queryString.isEmpty()) {
             return PageRequest.all();
         }
         int page = Optional.ofNullable(queryString.get(DEFAULT_PAGE_PARAMETER))
+                .flatMap(l -> Optional.ofNullable(l.get(0)))
                 .map(Integer::parseInt)
                 .orElse(0);
         int perPage = Optional.ofNullable(queryString.get(DEFAULT_SIZE_PARAMETER))
+                .flatMap(l -> Optional.ofNullable(l.get(0)))
                 .map(Integer::parseInt)
                 .map(i -> Math.min(i, MAX_PAGE_SIZE))
                 .orElse(MAX_PAGE_SIZE);
@@ -105,51 +105,64 @@ public class PageRequestFormatter {
         return parse(queryStringToMap(queryString));
     }
 
-    public static Criteria parseCriterionParameter(String key, String paramValue) {
-        String tmp = paramValue;
+    public static Criteria parseCriterionParameter(String key, List<String> paramValue) {
+        if (paramValue == null || paramValue.isEmpty()) {
+            return Criteria.property(key).eq(Boolean.TRUE);
+        }
+
+        List<Object> filteredListValues = paramValue.stream()
+                .distinct()
+                .map(PageRequestFormatter::parseValueType)
+                .collect(Collectors.toUnmodifiableList());
+
+        if (paramValue.size() > 1) {
+            return Criteria.property(key).in(filteredListValues);
+        }
+
+        String strValue = paramValue.get(0);
 
         // Parse operation
         BiFunction<CriterionProperty, Object, Criteria> operation = CriterionProperty::eq;
-        if (!StringUtils.isBlank(tmp)) {
-            switch (tmp.charAt(0)) {
+        if (!StringUtils.isBlank(strValue)) {
+            switch (strValue.charAt(0)) {
                 case '^':
-                    tmp = tmp.substring(1);
+                    strValue = strValue.substring(1);
                     operation = CriterionProperty::startWith;
                     break;
                 case '$':
-                    tmp = tmp.substring(1);
+                    strValue = strValue.substring(1);
                     operation = CriterionProperty::endWith;
                     break;
                 case '∋':
-                    tmp = tmp.substring(1);
+                    strValue = strValue.substring(1);
                     operation = CriterionProperty::contains;
                     break;
                 default:
             }
         }
 
-        // Parse value type
-        Object value;
-        var bValue = BooleanUtils.toBooleanObject(tmp);
-        if (bValue != null) {
-            value = bValue;
-        } else if (NumberUtils.isCreatable(tmp)) {
-            value = NumberUtils.createNumber(tmp);
-        } else {
-            value = (tmp != null && !tmp.isBlank())
-                    ? tmp : Boolean.TRUE;
-        }
+        Object value = parseValueType(strValue);
 
         return operation.apply(Criteria.property(key), value);
     }
 
-    public static Sort parseSortParameter(String value) {
-        if (value == null || value.isEmpty()) {
-            return Sort.of();
+    private static Object parseValueType(String strValue) {
+        Object value;
+        var bValue = BooleanUtils.toBooleanObject(strValue);
+        if (bValue != null) {
+            value = bValue;
+        } else if (NumberUtils.isCreatable(strValue)) {
+            value = NumberUtils.createNumber(strValue);
+        } else {
+            value = (strValue != null && !strValue.isBlank())
+                    ? strValue : Boolean.TRUE;
         }
+        return value;
+    }
 
-        String[] segment = value.split(",");
-        Order[] orders = Arrays.stream(segment)
+    static Sort parseSortParameter(List<String> value) {
+        Order[] orders = value.stream()
+                .flatMap(p -> Stream.of(p.split(",")))
                 .map(String::strip)
                 .filter(not(String::isBlank))
                 .filter(s -> s.length() > 1 || (s.charAt(0) != '-' && s.charAt(0) != '+'))
@@ -167,19 +180,21 @@ public class PageRequestFormatter {
         return Sort.of(orders);
     }
 
-    private static Map<String, String> queryStringToMap(String queryString) {
+    private static Map<String, List<String>> queryStringToMap(String queryString) {
         if (queryString == null || queryString.isBlank()) {
             return Map.of();
         }
         return Arrays.stream(queryString.split("&"))
                 .map(PageRequestFormatter::splitQueryParameter)
-                .collect(Collectors.toUnmodifiableMap(Entry::getKey, Entry::getValue));
+                .collect(Collectors.groupingBy(Entry::getKey, Collectors.mapping(Entry::getValue, Collectors.toUnmodifiableList())));
     }
 
     private static Entry<String, String> splitQueryParameter(String it) {
         final int idx = it.indexOf('=');
         boolean hasEqualSymbol = idx > 0;
-        final String key = hasEqualSymbol ? it.substring(0, idx) : it;
+        int arrayKeyIdx = it.indexOf('[');
+        arrayKeyIdx = (arrayKeyIdx > 0) ? Math.min(arrayKeyIdx, idx) : idx;
+        final String key = (hasEqualSymbol ? it.substring(0, arrayKeyIdx) : it);
         final String value = hasEqualSymbol && it.length() > idx + 1 ? it.substring(idx + 1) : "";
         return Map.entry(
                 URLDecoder.decode(key, StandardCharsets.UTF_8),

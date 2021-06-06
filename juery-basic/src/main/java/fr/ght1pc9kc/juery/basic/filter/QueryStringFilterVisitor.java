@@ -1,9 +1,12 @@
 package fr.ght1pc9kc.juery.basic.filter;
 
+import fr.ght1pc9kc.juery.api.Criteria;
 import fr.ght1pc9kc.juery.api.filter.*;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class QueryStringFilterVisitor implements CriteriaVisitor<String> {
@@ -41,7 +44,11 @@ public class QueryStringFilterVisitor implements CriteriaVisitor<String> {
 
     @Override
     public <T> String visitIn(InOperation<T> operation) {
-        throw new IllegalStateException("Operation 'in' not permitted in query string !");
+        List<Criteria> ands = new ArrayList<>(operation.value.value.size());
+        for (T t : operation.value.value) {
+            ands.add(Criteria.property(operation.field.property).eq(t));
+        }
+        return Criteria.and(ands.toArray(Criteria[]::new)).accept(this);
     }
 
     @Override
