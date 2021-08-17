@@ -3,6 +3,7 @@ package fr.ght1pc9kc.juery.api;
 import fr.ght1pc9kc.juery.api.pagination.Sort;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
+import lombok.With;
 
 /**
  * Define a Page Request with Search filters and Pagination
@@ -21,7 +22,7 @@ public class PageRequest {
     private static final PageRequest ALL = new PageRequest(Pagination.ALL, Criteria.none());
 
     final Pagination pagination;
-    final Criteria filter;
+    @With final Criteria filter;
 
     /**
      * Create a {@link PageRequest} with specified {@link Pagination} and {@link Criteria} filters.
