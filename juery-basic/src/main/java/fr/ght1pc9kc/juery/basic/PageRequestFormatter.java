@@ -39,6 +39,8 @@ import static java.util.function.Predicate.not;
 public class PageRequestFormatter {
     private static final String DEFAULT_PAGE_PARAMETER = "_p";
     private static final String DEFAULT_SIZE_PARAMETER = "_pp";
+    private static final String DEFAULT_FROM_PARAMETER = "_fr";
+    private static final String DEFAULT_TO_PARAMETER = "_to";
     private static final String DEFAULT_SORT_PARAMETER = "_s";
     private static final Set<String> EXCLUDE_FILTER_PARAMETERS = Set.of(
             DEFAULT_PAGE_PARAMETER, DEFAULT_SIZE_PARAMETER, DEFAULT_SORT_PARAMETER
@@ -107,15 +109,30 @@ public class PageRequestFormatter {
         if (queryString == null || queryString.isEmpty()) {
             return PageRequest.all();
         }
-        int page = Optional.ofNullable(queryString.get(DEFAULT_PAGE_PARAMETER))
+        if (queryString.get(DEFAULT_FROM_PARAMETER) == null) {
+            int page = Optional.ofNullable(queryString.get(DEFAULT_PAGE_PARAMETER))
+                    .flatMap(l -> Optional.ofNullable(l.get(0)))
+                    .map(Integer::parseInt)
+                    .orElse(0);
+            int perPage = Optional.ofNullable(queryString.get(DEFAULT_SIZE_PARAMETER))
+                    .flatMap(l -> Optional.ofNullable(l.get(0)))
+                    .map(Integer::parseInt)
+                    .map(i -> Math.min(i, MAX_PAGE_SIZE))
+                    .orElse(MAX_PAGE_SIZE);
+        }
+
+        int offset = Optional.ofNullable(queryString.get(DEFAULT_FROM_PARAMETER))
                 .flatMap(l -> Optional.ofNullable(l.get(0)))
                 .map(Integer::parseInt)
-                .orElse(0);
-        int perPage = Optional.ofNullable(queryString.get(DEFAULT_SIZE_PARAMETER))
+                .orElse(1);
+        int maxTo = offset + MAX_PAGE_SIZE - 1;
+        int to = Optional.ofNullable(queryString.get(DEFAULT_TO_PARAMETER))
                 .flatMap(l -> Optional.ofNullable(l.get(0)))
                 .map(Integer::parseInt)
-                .map(i -> Math.min(i, MAX_PAGE_SIZE))
-                .orElse(MAX_PAGE_SIZE);
+                .map(i -> Math.min(i, maxTo))
+                .filter(i -> i > offset)
+                .orElse(maxTo);
+
         Sort sort = Optional.ofNullable(queryString.get(DEFAULT_SORT_PARAMETER))
                 .map(PageRequestFormatter::parseSortParameter)
                 .orElse(Sort.of());

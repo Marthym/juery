@@ -69,6 +69,33 @@ class PageRequestFormatterTest {
                         PageRequest.of(
                                 Pagination.of(0, 100,
                                         Sort.of(new Order(Direction.ASC, "name"), new Order(Direction.DESC, "email"))),
+                                Criteria.none())),
+                Arguments.of(
+                        Map.of(
+                                "_fr", List.of("101"),
+                                "_s", List.of("name, -email"),
+                                "profile", List.of("jedi"),
+                                "job", List.of("master"),
+                                "firstname", List.of("^Obiwan"),
+                                "lastname", List.of("$Kenobi"),
+                                "name", List.of("∋biwan")
+                        ),
+                        PageRequest.of(
+                                Pagination.of(2, 100,
+                                        Sort.of(new Order(Direction.ASC, "name"), new Order(Direction.DESC, "email"))),
+                                Criteria.property("job").eq("master").and(Criteria.property("profile").eq("jedi"))
+                                        .and(Criteria.property("firstname").startWith("Obiwan"))
+                                        .and(Criteria.property("lastname").endWith("Kenobi"))
+                                        .and(Criteria.property("name").contains("biwan")))),
+                Arguments.of(
+                        Map.of(
+                                "_fr", List.of("11"),
+                                "_to", List.of("21"),
+                                "_s", List.of("name", "-email")
+                        ),
+                        PageRequest.of(
+                                Pagination.of(2, 10,
+                                        Sort.of(new Order(Direction.ASC, "name"), new Order(Direction.DESC, "email"))),
                                 Criteria.none()))
         );
     }
