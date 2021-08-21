@@ -160,4 +160,29 @@ class CriteriaTest {
         Assertions.assertThat(actual).isInstanceOf(ContainsOperation.class);
         Assertions.assertThat(((ContainsOperation<String>) actual).value.value).isEqualTo("Obiwan");
     }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void should_create_lower_greater_operation() {
+        {
+            Criteria actual = Criteria.property("name").lt("Obiwan");
+            Assertions.assertThat(actual).isInstanceOf(LowerThanOperation.class);
+            Assertions.assertThat(((LowerThanOperation<String>) actual).value.value).isEqualTo("Obiwan");
+        }
+        {
+            Criteria actual = Criteria.property("name").gt("Obiwan");
+            Assertions.assertThat(actual).isInstanceOf(GreaterThanOperation.class);
+            Assertions.assertThat(((GreaterThanOperation<String>) actual).value.value).isEqualTo("Obiwan");
+        }
+        {
+            Criteria actual = Criteria.property("name").lte("Obiwan");
+            Assertions.assertThat(actual).isInstanceOf(LowerThanEqualsOperation.class);
+            Assertions.assertThat(((LowerThanEqualsOperation<String>) actual).value.value).isEqualTo("Obiwan");
+        }
+        {
+            Criteria actual = Criteria.property("name").gte("Obiwan");
+            Assertions.assertThat(actual).isInstanceOf(GreaterThanEqualsOperation.class);
+            Assertions.assertThat(((GreaterThanEqualsOperation<String>) actual).value.value).isEqualTo("Obiwan");
+        }
+    }
 }
