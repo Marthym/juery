@@ -19,7 +19,7 @@ class JooqPaginationTest {
 
     @Test
     void should_limit_query() {
-        Pagination pagination = Pagination.of(5, 10);
+        Pagination pagination = Pagination.of(50, 10);
         Select<Record1<Integer>> actual = JooqPagination.apply(pagination, DSL.selectCount().from(NEWS));
         Assertions.assertThat(actual.getSQL(ParamType.INLINED))
                 .isEqualTo("select count(*) from \"NEWS\" limit 10 offset 50");

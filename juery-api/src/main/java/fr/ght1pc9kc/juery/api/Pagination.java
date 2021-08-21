@@ -61,8 +61,10 @@ public final class Pagination {
      */
     @Deprecated(since = "1.2.0", forRemoval = true)
     public int page() {
-        if (size == -1 || offset <= size) {
-            return 0;
+        if (size < 0) {
+            return -1;
+        } else if (offset <= size) {
+            return 1;
         }
         return (int) Math.floor((double) offset / (double) size);
     }
