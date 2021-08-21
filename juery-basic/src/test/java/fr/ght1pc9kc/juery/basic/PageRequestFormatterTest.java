@@ -154,7 +154,23 @@ class PageRequestFormatterTest {
                 Arguments.of("id[]=42&id[]=24&name=%5EObiwan", PageRequest.of(
                         Pagination.of(1, 100),
                         Criteria.property("id").in(42, 24)
-                                .and(Criteria.property("name").startWith("Obiwan"))))
+                                .and(Criteria.property("name").startWith("Obiwan")))),
+                Arguments.of("id=<42&name=%3CObiwan", PageRequest.of(
+                        Pagination.of(1, 100),
+                        Criteria.property("id").lt(42)
+                                .and(Criteria.property("name").lt("Obiwan")))),
+                Arguments.of("id=>42&name=%3EObiwan", PageRequest.of(
+                        Pagination.of(1, 100),
+                        Criteria.property("id").gt(42)
+                                .and(Criteria.property("name").gt("Obiwan")))),
+                Arguments.of("id=≤42&name=%E2%89%A4Obiwan", PageRequest.of(
+                        Pagination.of(1, 100),
+                        Criteria.property("id").lte(42)
+                                .and(Criteria.property("name").lte("Obiwan")))),
+                Arguments.of("id=≥42&name=%E2%89%A5Obiwan", PageRequest.of(
+                        Pagination.of(1, 100),
+                        Criteria.property("id").gte(42)
+                                .and(Criteria.property("name").gte("Obiwan"))))
         );
     }
 
