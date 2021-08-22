@@ -103,6 +103,14 @@ public class JooqConditionVisitor implements CriteriaVisitor<Condition> {
                     if (operation.value.isNull()) {
                         return f.isNull();
 
+                    } else if (f.getDataType().isDate()) {
+                        if (operation.value.value instanceof Instant) {
+                            return op.apply((Field<T>) f, (T) Instant.from((TemporalAccessor) operation.value.value)
+                                    .atOffset(ZoneOffset.UTC).toLocalDate());
+                        } else {
+                            return op.apply((Field<T>) f, (T) LocalDate.from((TemporalAccessor) operation.value.value));
+                        }
+
                     } else if (f.getDataType().isDateTime()) {
                         if (operation.value.value instanceof Instant) {
                             return op.apply((Field<T>) f, (T) Instant.from((TemporalAccessor) operation.value.value)
@@ -112,14 +120,6 @@ public class JooqConditionVisitor implements CriteriaVisitor<Condition> {
                                     .atStartOfDay());
                         } else {
                             return op.apply((Field<T>) f, (T) LocalDateTime.from((TemporalAccessor) operation.value.value));
-                        }
-
-                    } else if (f.getDataType().isDate()) {
-                        if (operation.value.value instanceof Instant) {
-                            return op.apply((Field<T>) f, (T) Instant.from((TemporalAccessor) operation.value.value)
-                                    .atOffset(ZoneOffset.UTC).toLocalDate());
-                        } else {
-                            return op.apply((Field<T>) f, (T) LocalDate.from((TemporalAccessor) operation.value.value));
                         }
 
                     } else {
