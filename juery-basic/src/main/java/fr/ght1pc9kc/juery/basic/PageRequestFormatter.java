@@ -11,6 +11,7 @@ import fr.ght1pc9kc.juery.basic.common.lang3.BooleanUtils;
 import fr.ght1pc9kc.juery.basic.common.lang3.NumberUtils;
 import fr.ght1pc9kc.juery.basic.common.lang3.StringUtils;
 import fr.ght1pc9kc.juery.basic.filter.QueryStringFilterVisitor;
+import fr.ght1pc9kc.juery.basic.utils.TemporalUtils;
 import lombok.experimental.UtilityClass;
 
 import java.net.URLDecoder;
@@ -238,6 +239,8 @@ public class PageRequestFormatter {
             value = bValue;
         } else if (NumberUtils.isCreatable(strValue)) {
             value = NumberUtils.createNumber(strValue);
+        } else if (TemporalUtils.isCreatable(strValue)) {
+            value = TemporalUtils.create(strValue);
         } else {
             value = (strValue != null && !strValue.isBlank())
                     ? strValue : Boolean.TRUE;
