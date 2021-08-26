@@ -39,7 +39,7 @@ class PageRequestFormatterTest {
                                 "name", List.of("∋biwan")
                         ),
                         PageRequest.of(
-                                Pagination.of(2, 100,
+                                Pagination.of(201, 100,
                                         Sort.of(new Order(Direction.ASC, "name"), new Order(Direction.DESC, "email"))),
                                 Criteria.property("job").eq("master").and(Criteria.property("profile").eq("jedi"))
                                         .and(Criteria.property("firstname").startWith("Obiwan"))
@@ -48,26 +48,53 @@ class PageRequestFormatterTest {
                 Arguments.of(
                         Map.of("_pp", List.of("200")),
                         PageRequest.of(
-                                Pagination.of(0, 100, Sort.of()),
+                                Pagination.of(1, 100, Sort.of()),
                                 Criteria.none())),
                 Arguments.of(
                         Map.of(
                                 "_pp", List.of("200"),
                                 "name", List.of("")),
                         PageRequest.of(
-                                Pagination.of(0, 100, Sort.of()),
+                                Pagination.of(1, 100, Sort.of()),
                                 Criteria.property("name").eq(true))),
                 Arguments.of(
                         Map.of(
                                 "_pp", List.of("200"),
                                 "name", List.of()),
                         PageRequest.of(
-                                Pagination.of(0, 100, Sort.of()),
+                                Pagination.of(1, 100, Sort.of()),
                                 Criteria.property("name").eq(true))),
                 Arguments.of(
                         Map.of("_s", List.of("name", "-email")),
                         PageRequest.of(
-                                Pagination.of(0, 100,
+                                Pagination.of(1, 100,
+                                        Sort.of(new Order(Direction.ASC, "name"), new Order(Direction.DESC, "email"))),
+                                Criteria.none())),
+                Arguments.of(
+                        Map.of(
+                                "_from", List.of("101"),
+                                "_s", List.of("name, -email"),
+                                "profile", List.of("jedi"),
+                                "job", List.of("master"),
+                                "firstname", List.of("^Obiwan"),
+                                "lastname", List.of("$Kenobi"),
+                                "name", List.of("∋biwan")
+                        ),
+                        PageRequest.of(
+                                Pagination.of(101, 100,
+                                        Sort.of(new Order(Direction.ASC, "name"), new Order(Direction.DESC, "email"))),
+                                Criteria.property("job").eq("master").and(Criteria.property("profile").eq("jedi"))
+                                        .and(Criteria.property("firstname").startWith("Obiwan"))
+                                        .and(Criteria.property("lastname").endWith("Kenobi"))
+                                        .and(Criteria.property("name").contains("biwan")))),
+                Arguments.of(
+                        Map.of(
+                                "_from", List.of("11"),
+                                "_to", List.of("21"),
+                                "_s", List.of("name", "-email")
+                        ),
+                        PageRequest.of(
+                                Pagination.of(11, 10,
                                         Sort.of(new Order(Direction.ASC, "name"), new Order(Direction.DESC, "email"))),
                                 Criteria.none()))
         );
@@ -110,22 +137,22 @@ class PageRequestFormatterTest {
                 Arguments.of(
                         "_p=2&_s=name,-email&profile=jedi&job=master",
                         PageRequest.of(
-                                Pagination.of(2, 100, Sort.of(new Order(Direction.ASC, "name"), new Order(Direction.DESC, "email"))),
+                                Pagination.of(201, 100, Sort.of(new Order(Direction.ASC, "name"), new Order(Direction.DESC, "email"))),
                                 Criteria.property("job").eq("master").and(Criteria.property("profile").eq("jedi")))),
                 Arguments.of("", PageRequest.all()),
                 Arguments.of(
                         "name",
                         PageRequest.of(
-                                Pagination.of(0, 100),
+                                Pagination.of(1, 100),
                                 Criteria.property("name").eq(true))),
                 Arguments.of("name=%5EObiwan", PageRequest.of(
-                        Pagination.of(0, 100),
+                        Pagination.of(1, 100),
                         Criteria.property("name").startWith("Obiwan"))),
                 Arguments.of("name=%E2%88%8Bbiwa", PageRequest.of(
-                        Pagination.of(0, 100),
+                        Pagination.of(1, 100),
                         Criteria.property("name").contains("biwa"))),
                 Arguments.of("id[]=42&id[]=24&name=%5EObiwan", PageRequest.of(
-                        Pagination.of(0, 100),
+                        Pagination.of(1, 100),
                         Criteria.property("id").in(42, 24)
                                 .and(Criteria.property("name").startWith("Obiwan"))))
         );
@@ -143,7 +170,7 @@ class PageRequestFormatterTest {
     @SuppressWarnings("unused")
     private static Stream<Arguments> should_format_page_request_to_query_string() {
         return Stream.of(
-                Arguments.of("_p=2&_s=name,-email&profile=jedi&job=master",
+                Arguments.of("_from=2&_s=name,-email&profile=jedi&job=master",
                         PageRequest.of(
                                 Pagination.of(2, 100, Sort.of(new Order(Direction.ASC, "name"), new Order(Direction.DESC, "email"))),
                                 Criteria.property("profile").eq("jedi").and(Criteria.property("job").eq("master")))),

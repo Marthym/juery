@@ -23,8 +23,8 @@ public class JooqPagination {
         }
         if (page.size() > 0) {
             query.addLimit(page.size());
-            if (page.page() > 0) {
-                query.addOffset(page.page() * page.size());
+            if (page.offset() > 0) {
+                query.addOffset(page.offset());
             }
         }
         return query;

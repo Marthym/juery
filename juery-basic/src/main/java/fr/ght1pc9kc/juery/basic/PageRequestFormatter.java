@@ -39,9 +39,11 @@ import static java.util.function.Predicate.not;
 public class PageRequestFormatter {
     private static final String DEFAULT_PAGE_PARAMETER = "_p";
     private static final String DEFAULT_SIZE_PARAMETER = "_pp";
+    private static final String DEFAULT_FROM_PARAMETER = "_from";
+    private static final String DEFAULT_TO_PARAMETER = "_to";
     private static final String DEFAULT_SORT_PARAMETER = "_s";
     private static final Set<String> EXCLUDE_FILTER_PARAMETERS = Set.of(
-            DEFAULT_PAGE_PARAMETER, DEFAULT_SIZE_PARAMETER, DEFAULT_SORT_PARAMETER
+            DEFAULT_PAGE_PARAMETER, DEFAULT_SIZE_PARAMETER, DEFAULT_FROM_PARAMETER, DEFAULT_TO_PARAMETER, DEFAULT_SORT_PARAMETER
     );
     private static final int MAX_PAGE_SIZE = 100;
     private static final QueryStringFilterVisitor CRITERIA_FORMATTER = new QueryStringFilterVisitor();
@@ -62,11 +64,11 @@ public class PageRequestFormatter {
      */
     public static String formatPageRequest(PageRequest pr) {
         var qs = new StringBuilder();
-        if (pr.pagination().page() > 0) {
-            qs.append(DEFAULT_PAGE_PARAMETER + "=").append(pr.pagination().page()).append('&');
+        if (pr.pagination().offset() > 1) {
+            qs.append(DEFAULT_FROM_PARAMETER + "=").append(pr.pagination().offset()).append('&');
         }
         if (pr.pagination().size() < MAX_PAGE_SIZE) {
-            qs.append(DEFAULT_SORT_PARAMETER + "=").append(pr.pagination().size()).append('&');
+            qs.append(DEFAULT_SIZE_PARAMETER + "=").append(pr.pagination().size()).append('&');
         }
         if (!pr.pagination().sort().equals(Sort.of())) {
             qs.append(DEFAULT_SORT_PARAMETER + "=").append(formatSortValue(pr.pagination().sort())).append('&');
@@ -107,18 +109,10 @@ public class PageRequestFormatter {
         if (queryString == null || queryString.isEmpty()) {
             return PageRequest.all();
         }
-        int page = Optional.ofNullable(queryString.get(DEFAULT_PAGE_PARAMETER))
-                .flatMap(l -> Optional.ofNullable(l.get(0)))
-                .map(Integer::parseInt)
-                .orElse(0);
-        int perPage = Optional.ofNullable(queryString.get(DEFAULT_SIZE_PARAMETER))
-                .flatMap(l -> Optional.ofNullable(l.get(0)))
-                .map(Integer::parseInt)
-                .map(i -> Math.min(i, MAX_PAGE_SIZE))
-                .orElse(MAX_PAGE_SIZE);
-        Sort sort = Optional.ofNullable(queryString.get(DEFAULT_SORT_PARAMETER))
-                .map(PageRequestFormatter::parseSortParameter)
-                .orElse(Sort.of());
+
+        Pagination pagination = (queryString.containsKey(DEFAULT_PAGE_PARAMETER))
+                ? parsePaginationByPage(queryString)
+                : parsePaginationByOffset(queryString);
 
         Criteria[] filters = queryString.entrySet().stream()
                 .filter(e -> !EXCLUDE_FILTER_PARAMETERS.contains(e.getKey()))
@@ -126,10 +120,53 @@ public class PageRequestFormatter {
                 .map(e -> parseCriterionParameter(e.getKey(), e.getValue()))
                 .toArray(Criteria[]::new);
 
-        return PageRequest.of(
-                Pagination.of(page, perPage, sort),
-                Criteria.and(filters)
-        );
+        return PageRequest.of(pagination, Criteria.and(filters));
+    }
+
+    private static Pagination parsePaginationByPage(Map<String, List<String>> queryString) {
+        int page = Optional.ofNullable(queryString.get(DEFAULT_PAGE_PARAMETER))
+                .flatMap(l -> Optional.ofNullable(l.get(0)))
+                .map(Integer::parseInt)
+                .orElse(0);
+
+        int size = Optional.ofNullable(queryString.get(DEFAULT_SIZE_PARAMETER))
+                .flatMap(l -> Optional.ofNullable(l.get(0)))
+                .map(Integer::parseInt)
+                .map(i -> Math.min(i, MAX_PAGE_SIZE))
+                .orElse(MAX_PAGE_SIZE);
+
+        Sort sort = Optional.ofNullable(queryString.get(DEFAULT_SORT_PARAMETER))
+                .map(PageRequestFormatter::parseSortParameter)
+                .orElse(Sort.of());
+
+        return Pagination.of(page * size + 1, size, sort);
+    }
+
+    private static Pagination parsePaginationByOffset(Map<String, List<String>> queryString) {
+        int offset = Optional.ofNullable(queryString.get(DEFAULT_FROM_PARAMETER))
+                .flatMap(l -> Optional.ofNullable(l.get(0)))
+                .map(Integer::parseInt)
+                .orElse(1);
+
+        int maxTo = offset + MAX_PAGE_SIZE - 1;
+
+        int size = Optional.ofNullable(queryString.get(DEFAULT_SIZE_PARAMETER))
+                .flatMap(l -> Optional.ofNullable(l.get(0)))
+                .map(Integer::parseInt)
+                .map(i -> Math.min(i, MAX_PAGE_SIZE))
+                .orElseGet(() -> Optional.ofNullable(queryString.get(DEFAULT_TO_PARAMETER))
+                        .flatMap(l -> Optional.ofNullable(l.get(0)))
+                        .map(Integer::parseInt)
+                        .map(i -> Math.min(i, maxTo))
+                        .filter(i -> i > offset)
+                        .map(i -> i - offset)
+                        .orElse(MAX_PAGE_SIZE));
+
+        Sort sort = Optional.ofNullable(queryString.get(DEFAULT_SORT_PARAMETER))
+                .map(PageRequestFormatter::parseSortParameter)
+                .orElse(Sort.of());
+
+        return Pagination.of(offset, size, sort);
     }
 
     public static PageRequest parse(String queryString) {
