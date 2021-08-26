@@ -57,7 +57,17 @@ public class ListPropertiesCriteriaVisitor implements CriteriaVisitor<List<Strin
     }
 
     @Override
+    public <T> List<String> visitGreaterThanEquals(GreaterThanEqualsOperation<T> operation) {
+        return List.of(operation.field.property);
+    }
+
+    @Override
     public <T> List<String> visitLowerThan(LowerThanOperation<T> operation) {
+        return List.of(operation.field.property);
+    }
+
+    @Override
+    public <T> List<String> visitLowerThanEquals(LowerThanEqualsOperation<T> operation) {
         return List.of(operation.field.property);
     }
 

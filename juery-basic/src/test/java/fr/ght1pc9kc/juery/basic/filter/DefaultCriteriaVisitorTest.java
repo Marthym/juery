@@ -29,6 +29,9 @@ class DefaultCriteriaVisitorTest {
                 Arguments.of(Criteria.not(Criteria.property("faction").eq("sith"))
                         .and(Criteria.property("age").gt(40))
                         .or(Criteria.property("age").lt(20))),
+                Arguments.of(Criteria.not(Criteria.property("faction").eq("sith"))
+                        .and(Criteria.property("age").gte(40))
+                        .or(Criteria.property("age").lte(20))),
                 Arguments.of(Criteria.property("name").startWith("Obiwan")
                         .and(Criteria.property("lastname").endWith("Kenobi"))
                         .and(Criteria.property("faction").contains("publiq"))),

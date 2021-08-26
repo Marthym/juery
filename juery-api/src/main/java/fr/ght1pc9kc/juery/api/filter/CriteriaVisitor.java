@@ -13,7 +13,15 @@ public interface CriteriaVisitor<R> {
 
     <T> R visitGreaterThan(GreaterThanOperation<T> operation);
 
+    default <T> R visitGreaterThanEquals(GreaterThanEqualsOperation<T> operation) {
+        throw new IllegalStateException("START_WITH operation not implemented in visitor");
+    }
+
     <T> R visitLowerThan(LowerThanOperation<T> operation);
+
+    default <T> R visitLowerThanEquals(LowerThanEqualsOperation<T> operation) {
+        throw new IllegalStateException("START_WITH operation not implemented in visitor");
+    }
 
     default <T> R visitStartWith(StartWithOperation<T> operation) {
         throw new IllegalStateException("START_WITH operation not implemented in visitor");

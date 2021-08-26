@@ -77,8 +77,18 @@ public class JooqConditionVisitor implements CriteriaVisitor<Condition> {
     }
 
     @Override
+    public <T> Condition visitGreaterThanEquals(GreaterThanEqualsOperation<T> operation) {
+        return readFieldToCondition(operation, Field::ge);
+    }
+
+    @Override
     public <T> Condition visitLowerThan(LowerThanOperation<T> operation) {
         return readFieldToCondition(operation, Field::lt);
+    }
+
+    @Override
+    public <T> Condition visitLowerThanEquals(LowerThanEqualsOperation<T> operation) {
+        return readFieldToCondition(operation, Field::le);
     }
 
     @SuppressWarnings("unchecked")

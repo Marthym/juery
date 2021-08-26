@@ -22,6 +22,7 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static fr.ght1pc9kc.juery.basic.filter.QueryStringFilterVisitor.*;
 import static java.util.function.Predicate.not;
 
 /**
@@ -193,17 +194,33 @@ public class PageRequestFormatter {
         BiFunction<CriterionProperty, Object, Criteria> operation = CriterionProperty::eq;
         if (!StringUtils.isBlank(strValue)) {
             switch (strValue.charAt(0)) {
-                case '^':
+                case QS_START_CHAR:
                     strValue = strValue.substring(1);
                     operation = CriterionProperty::startWith;
                     break;
-                case '$':
+                case QS_END_CHAR:
                     strValue = strValue.substring(1);
                     operation = CriterionProperty::endWith;
                     break;
-                case '∋':
+                case QS_CONTAINS_CHAR:
                     strValue = strValue.substring(1);
                     operation = CriterionProperty::contains;
+                    break;
+                case QS_LT_CHAR:
+                    strValue = strValue.substring(1);
+                    operation = CriterionProperty::lt;
+                    break;
+                case QS_GT_CHAR:
+                    strValue = strValue.substring(1);
+                    operation = CriterionProperty::gt;
+                    break;
+                case QS_LTE_CHAR:
+                    strValue = strValue.substring(1);
+                    operation = CriterionProperty::lte;
+                    break;
+                case QS_GTE_CHAR:
+                    strValue = strValue.substring(1);
+                    operation = CriterionProperty::gte;
                     break;
                 default:
             }

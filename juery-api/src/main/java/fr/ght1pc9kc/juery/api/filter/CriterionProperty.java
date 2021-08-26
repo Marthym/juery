@@ -46,6 +46,14 @@ public class CriterionProperty {
         return new LowerThanOperation<>(this, new CriterionValue<>(value));
     }
 
+    public <T> Criteria gte(T value) {
+        return new GreaterThanEqualsOperation<>(this, new CriterionValue<>(value));
+    }
+
+    public <T> Criteria lte(T value) {
+        return new LowerThanEqualsOperation<>(this, new CriterionValue<>(value));
+    }
+
     public <T> Criteria startWith(T value) {
         return new StartWithOperation<>(this, new CriterionValue<>(value));
     }

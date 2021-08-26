@@ -34,6 +34,12 @@ class JooqConditionVisitorTest {
                         NEWS_TITLE.eq("Obiwan").and(
                                 NEWS_PUBLICATION.gt(LocalDateTime.parse("2020-12-11T10:20:42"))
                                         .or(NEWS_PUBLICATION.lt(LocalDateTime.parse("2020-12-11T10:20:42"))))),
+                Arguments.of(Criteria.property("title").eq("Obiwan")
+                                .and(Criteria.property("publication").gte(NOW)
+                                        .or(Criteria.property("publication").lte(NOW))),
+                        NEWS_TITLE.eq("Obiwan").and(
+                                NEWS_PUBLICATION.ge(LocalDateTime.parse("2020-12-11T10:20:42"))
+                                        .or(NEWS_PUBLICATION.le(LocalDateTime.parse("2020-12-11T10:20:42"))))),
                 Arguments.of(Criteria.property("id").in("1", "2", "3", "4", "42"),
                         NEWS_ID.in("1", "2", "3", "4", "42")),
                 Arguments.of(Criteria.property("id").startWith("42"), NEWS_ID.startsWith("42")),

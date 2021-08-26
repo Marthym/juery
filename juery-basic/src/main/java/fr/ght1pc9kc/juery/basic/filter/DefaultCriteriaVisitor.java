@@ -39,7 +39,17 @@ public class DefaultCriteriaVisitor implements CriteriaVisitor<Criteria> {
     }
 
     @Override
+    public <T> Criteria visitGreaterThanEquals(GreaterThanEqualsOperation<T> operation) {
+        return operation;
+    }
+
+    @Override
     public <T> Criteria visitLowerThan(LowerThanOperation<T> operation) {
+        return operation;
+    }
+
+    @Override
+    public <T> Criteria visitLowerThanEquals(LowerThanEqualsOperation<T> operation) {
         return operation;
     }
 
