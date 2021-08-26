@@ -347,7 +347,6 @@
                         </executions>
                         <configuration>
                             <useAgent>true</useAgent>
-<!--                            <passphrase>${env.GPG_PASSPHRASE}</passphrase>-->
                             <gpgArguments>
                                 <arg>--pinentry-mode</arg>
                                 <arg>loopback</arg>
