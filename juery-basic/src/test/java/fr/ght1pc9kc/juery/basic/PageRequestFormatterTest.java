@@ -11,6 +11,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,7 +37,8 @@ class PageRequestFormatterTest {
                                 "job", List.of("master"),
                                 "firstname", List.of("^Obiwan"),
                                 "lastname", List.of("$Kenobi"),
-                                "name", List.of("∋biwan")
+                                "name", List.of("∋biwan"),
+                                "birthday", List.of("<2021-09-12T12:42:55")
                         ),
                         PageRequest.of(
                                 Pagination.of(201, 100,
@@ -44,7 +46,8 @@ class PageRequestFormatterTest {
                                 Criteria.property("job").eq("master").and(Criteria.property("profile").eq("jedi"))
                                         .and(Criteria.property("firstname").startWith("Obiwan"))
                                         .and(Criteria.property("lastname").endWith("Kenobi"))
-                                        .and(Criteria.property("name").contains("biwan")))),
+                                        .and(Criteria.property("name").contains("biwan"))
+                                        .and(Criteria.property("birthday").lt(LocalDateTime.parse("2021-09-12T12:42:55"))))),
                 Arguments.of(
                         Map.of("_pp", List.of("200")),
                         PageRequest.of(
