@@ -15,12 +15,13 @@ public final class TemporalUtils {
                         LocalDateTime::from, LocalDate::from, Instant::from);
                 return true;
             } catch (Exception ignore) {
+                // Do nothing, just return false
             }
         }
         return false;
     }
 
-    @SuppressWarnings("UnnecessaryContinue")
+    @SuppressWarnings({"UnnecessaryContinue", "squid:S3776", "squid:S3626"})
     private static ManagedTemporal detectCreatable(String date) {
         boolean hasTime = false;
         boolean hasDate = false;
