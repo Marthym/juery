@@ -41,7 +41,7 @@ class PageRequestFormatterTest {
                                 "birthday", List.of("<2021-09-12T12:42:55")
                         ),
                         PageRequest.of(
-                                Pagination.of(201, 100,
+                                Pagination.of(200, 100,
                                         Sort.of(new Order(Direction.ASC, "name"), new Order(Direction.DESC, "email"))),
                                 Criteria.property("job").eq("master").and(Criteria.property("profile").eq("jedi"))
                                         .and(Criteria.property("firstname").startWith("Obiwan"))
@@ -140,7 +140,7 @@ class PageRequestFormatterTest {
                 Arguments.of(
                         "_p=2&_s=name,-email&profile=jedi&job=master",
                         PageRequest.of(
-                                Pagination.of(201, 100, Sort.of(new Order(Direction.ASC, "name"), new Order(Direction.DESC, "email"))),
+                                Pagination.of(200, 100, Sort.of(new Order(Direction.ASC, "name"), new Order(Direction.DESC, "email"))),
                                 Criteria.property("job").eq("master").and(Criteria.property("profile").eq("jedi")))),
                 Arguments.of("", PageRequest.all()),
                 Arguments.of(

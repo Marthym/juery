@@ -141,7 +141,7 @@ public class PageRequestFormatter {
                 .map(PageRequestFormatter::parseSortParameter)
                 .orElse(Sort.of());
 
-        return Pagination.of(page * size + 1, size, sort);
+        return Pagination.of(page * size, size, sort);
     }
 
     private static Pagination parsePaginationByOffset(Map<String, List<String>> queryString) {
