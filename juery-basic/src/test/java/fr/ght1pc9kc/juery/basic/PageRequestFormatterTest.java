@@ -103,12 +103,12 @@ class PageRequestFormatterTest {
         );
     }
 
-    @MethodSource
-    @ParameterizedTest
-    void should_parse_sort_parameter(String sortValue, Sort expected) {
-        Sort actual = PageRequestFormatter.parseSortParameter(List.of(sortValue));
-        Assertions.assertThat(actual).isEqualTo(expected);
-    }
+//    @MethodSource
+//    @ParameterizedTest
+//    void should_parse_sort_parameter(String sortValue, Sort expected) {
+//        Sort actual = PageRequestFormatter.parseSortParameter(List.of(sortValue));
+//        Assertions.assertThat(actual).isEqualTo(expected);
+//    }
 
     @SuppressWarnings("unused")
     private static Stream<Arguments> should_parse_sort_parameter() {
