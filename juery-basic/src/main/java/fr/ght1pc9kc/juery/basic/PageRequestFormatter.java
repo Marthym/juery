@@ -38,7 +38,7 @@ import static java.util.function.Predicate.not;
  * </ul>
  * @deprecated Use {@link QueryStringParser} instead.
  */
-@Deprecated(since = "1.2.0")
+@Deprecated(since = "1.2.0", forRemoval = true)
 @UtilityClass
 public class PageRequestFormatter {
     private final QueryStringParser delegateParser = QueryStringParser._default();
