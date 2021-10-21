@@ -37,7 +37,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
 
-        <lombok.version>1.18.20</lombok.version>
+        <lombok.version>1.18.22</lombok.version>
         <jetbrains.version>20.1.0</jetbrains.version>
         <jooq.version>3.14.8</jooq.version>
 
