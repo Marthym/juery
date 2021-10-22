@@ -16,26 +16,26 @@ Use the package manager [maven](https://maven.apache.org/) to install juery.
 <dependency>
     <groupId>fr.ght1pc9kc</groupId>
     <artifactId>juery-api</artifactId>
-    <version>${juery.version}</version>
+    <version>1.2.0</version>
 </dependency>
 <dependency>
     <groupId>fr.ght1pc9kc</groupId>
     <artifactId>juery-basic</artifactId>
-    <version>${juery.version}</version>
+    <version>1.2.0</version>
 </dependency>
 <dependency>
     <groupId>fr.ght1pc9kc</groupId>
     <artifactId>juery-jooq</artifactId>
-    <version>${juery.version}</version>
+    <version>1.2.0</version>
 </dependency>
 ```
 
 for gradle
 
 ```groovy
-compile "fr.ght1pc9kc:juery-api:1.0.0"
-compile "fr.ght1pc9kc:juery-basic:1.0.0"
-compile "fr.ght1pc9kc:juery-jooq:1.0.0"
+compile "fr.ght1pc9kc:juery-api:1.2.0"
+compile "fr.ght1pc9kc:juery-basic:1.2.0"
+compile "fr.ght1pc9kc:juery-jooq:1.2.0"
 ```
 
 ## Usage
@@ -68,18 +68,35 @@ PageRequest.builder()
 Into the controller.
 
 ```java
-import fr.ght1pc9kc.juery.basic.PageRequestFormatter;
+import fr.ght1pc9kc.juery.basic.QueryStringParser;
 
 @GetMapping
 public Flux<Feed> list(@RequestParam Map<String, String> queryStringParams) {
-    return feedService.list(PageRequestFormatter.parse(queryStringParams))
-            .onErrorMap(BadCriteriaFilter.class, e -> new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getLocalizedMessage()));
+        return feedService.list(QueryStringParser.withDefaultConfig().parse(queryStringParams))
+        .onErrorMap(BadCriteriaFilter.class, e -> new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getLocalizedMessage()));
 }
 ```
 
-`PageRequestFormatter` will transform the query string into a` PageRequest` which contains a `Criteria`. 
+`QueryStringParser` will transform the query string into a` PageRequest` which contains a `Criteria`. 
 Depending on your architecture, the object will traverse layers until persistence. 
 It can be enriched in the process by `with` methods which create a new enriched object. **All the API is strictly immutable**.
+
+*Since 1.2.0*: You can now, configure the `QueryStringParser` to customize the querystring parameters used :
+
+```java
+import fr.ght1pc9kc.juery.basic.ParserConfiguration;
+        
+ParserConfiguration config = ParserConfiguration.builder()
+        .page("_pg")
+        .size("_sz")
+        .from("_fr")
+        .to("_to")
+        .sort("_st")
+        .maxPageSize(20)
+        .build();
+
+QueryStringParser.withConfig(config).parse(queryStringParams);
+```
 
 ### Filtering
 
