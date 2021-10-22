@@ -10,6 +10,13 @@
     <artifactId>juery-api</artifactId>
     <name>Juery API</name>
 
+    <properties>
+        <surefire.argline.opens>
+            --add-opens juery.api/fr.ght1pc9kc.juery.api=ALL-UNNAMED
+            --add-opens juery.api/fr.ght1pc9kc.juery.api.filter=ALL-UNNAMED
+        </surefire.argline.opens>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.projectlombok</groupId>
