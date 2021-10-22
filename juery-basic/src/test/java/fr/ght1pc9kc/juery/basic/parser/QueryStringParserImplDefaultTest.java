@@ -19,7 +19,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 class QueryStringParserImplDefaultTest {
-    private final QueryStringParser tested = QueryStringParser._default();
+    private final QueryStringParser tested = QueryStringParser.withDefaultConfig();
 
     @MethodSource
     @ParameterizedTest
