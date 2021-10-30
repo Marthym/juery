@@ -60,8 +60,18 @@ public class StringSearchVisitor implements CriteriaVisitor<String> {
     }
 
     @Override
+    public <T> String visitGreaterThanEquals(GreaterThanEqualsOperation<T> operation) {
+        return operation.field.property + " >= " + operation.value.accept(this);
+    }
+
+    @Override
     public <T> String visitLowerThan(LowerThanOperation<T> operation) {
         return operation.field.property + " < " + operation.value.accept(this);
+    }
+
+    @Override
+    public <T> String visitLowerThanEquals(LowerThanEqualsOperation<T> operation) {
+        return operation.field.property + " <= " + operation.value.accept(this);
     }
 
     @Override

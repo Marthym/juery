@@ -1,4 +1,4 @@
-package fr.ght1pc9kc.juery.basic;
+package fr.ght1pc9kc.juery.basic.parser;
 
 import fr.ght1pc9kc.juery.api.Criteria;
 import fr.ght1pc9kc.juery.api.PageRequest;
@@ -6,6 +6,8 @@ import fr.ght1pc9kc.juery.api.Pagination;
 import fr.ght1pc9kc.juery.api.pagination.Direction;
 import fr.ght1pc9kc.juery.api.pagination.Order;
 import fr.ght1pc9kc.juery.api.pagination.Sort;
+import fr.ght1pc9kc.juery.basic.ParserConfiguration;
+import fr.ght1pc9kc.juery.basic.QueryStringParser;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -17,11 +19,20 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
-class PageRequestFormatterTest {
+class QueryStringParserImplConfigTest {
+    private final QueryStringParser tested = QueryStringParser.withConfig(ParserConfiguration.builder()
+                    .page("page")
+                    .size("size")
+                    .from("from")
+                    .to("to")
+                    .sort("sort")
+                    .maxPageSize(20)
+            .build());
+
     @MethodSource
     @ParameterizedTest
     void should_parse_page_request_from_map(Map<String, List<String>> queryString, PageRequest expected) {
-        PageRequest actual = PageRequestFormatter.parse(queryString);
+        PageRequest actual = tested.parse(queryString);
 
         Assertions.assertThat(actual).isEqualTo(expected);
     }
@@ -31,8 +42,8 @@ class PageRequestFormatterTest {
         return Stream.of(
                 Arguments.of(
                         Map.of(
-                                "_p", List.of("2"),
-                                "_s", List.of("name, -email"),
+                                "page", List.of("2"),
+                                "sort", List.of("name, -email"),
                                 "profile", List.of("jedi"),
                                 "job", List.of("master"),
                                 "firstname", List.of("^Obiwan"),
@@ -41,7 +52,7 @@ class PageRequestFormatterTest {
                                 "birthday", List.of("<2021-09-12T12:42:55")
                         ),
                         PageRequest.of(
-                                Pagination.of(200, 100,
+                                Pagination.of(40, 20,
                                         Sort.of(new Order(Direction.ASC, "name"), new Order(Direction.DESC, "email"))),
                                 Criteria.property("job").eq("master").and(Criteria.property("profile").eq("jedi"))
                                         .and(Criteria.property("firstname").startWith("Obiwan"))
@@ -49,34 +60,34 @@ class PageRequestFormatterTest {
                                         .and(Criteria.property("name").contains("biwan"))
                                         .and(Criteria.property("birthday").lt(LocalDateTime.parse("2021-09-12T12:42:55"))))),
                 Arguments.of(
-                        Map.of("_pp", List.of("200")),
+                        Map.of("size", List.of("200")),
                         PageRequest.of(
-                                Pagination.of(1, 100, Sort.of()),
+                                Pagination.of(1, 20, Sort.of()),
                                 Criteria.none())),
                 Arguments.of(
                         Map.of(
-                                "_pp", List.of("200"),
+                                "size", List.of("200"),
                                 "name", List.of("")),
                         PageRequest.of(
-                                Pagination.of(1, 100, Sort.of()),
+                                Pagination.of(1, 20, Sort.of()),
                                 Criteria.property("name").eq(true))),
                 Arguments.of(
                         Map.of(
-                                "_pp", List.of("200"),
+                                "size", List.of("200"),
                                 "name", List.of()),
                         PageRequest.of(
-                                Pagination.of(1, 100, Sort.of()),
+                                Pagination.of(1, 20, Sort.of()),
                                 Criteria.property("name").eq(true))),
                 Arguments.of(
-                        Map.of("_s", List.of("name", "-email")),
+                        Map.of("sort", List.of("name", "-email")),
                         PageRequest.of(
-                                Pagination.of(1, 100,
+                                Pagination.of(1, 20,
                                         Sort.of(new Order(Direction.ASC, "name"), new Order(Direction.DESC, "email"))),
                                 Criteria.none())),
                 Arguments.of(
                         Map.of(
-                                "_from", List.of("101"),
-                                "_s", List.of("name, -email"),
+                                "from", List.of("101"),
+                                "sort", List.of("name, -email"),
                                 "profile", List.of("jedi"),
                                 "job", List.of("master"),
                                 "firstname", List.of("^Obiwan"),
@@ -84,7 +95,7 @@ class PageRequestFormatterTest {
                                 "name", List.of("∋biwan")
                         ),
                         PageRequest.of(
-                                Pagination.of(101, 100,
+                                Pagination.of(101, 20,
                                         Sort.of(new Order(Direction.ASC, "name"), new Order(Direction.DESC, "email"))),
                                 Criteria.property("job").eq("master").and(Criteria.property("profile").eq("jedi"))
                                         .and(Criteria.property("firstname").startWith("Obiwan"))
@@ -92,9 +103,9 @@ class PageRequestFormatterTest {
                                         .and(Criteria.property("name").contains("biwan")))),
                 Arguments.of(
                         Map.of(
-                                "_from", List.of("11"),
-                                "_to", List.of("21"),
-                                "_s", List.of("name", "-email")
+                                "from", List.of("11"),
+                                "to", List.of("21"),
+                                "sort", List.of("name", "-email")
                         ),
                         PageRequest.of(
                                 Pagination.of(11, 10,
@@ -102,13 +113,6 @@ class PageRequestFormatterTest {
                                 Criteria.none()))
         );
     }
-
-//    @MethodSource
-//    @ParameterizedTest
-//    void should_parse_sort_parameter(String sortValue, Sort expected) {
-//        Sort actual = PageRequestFormatter.parseSortParameter(List.of(sortValue));
-//        Assertions.assertThat(actual).isEqualTo(expected);
-//    }
 
     @SuppressWarnings("unused")
     private static Stream<Arguments> should_parse_sort_parameter() {
@@ -127,7 +131,7 @@ class PageRequestFormatterTest {
     @MethodSource
     @ParameterizedTest
     void should_parse_page_request_from_string(String qs, PageRequest expected) {
-        PageRequest actual = PageRequestFormatter.parse(qs);
+        PageRequest actual = tested.parse(qs);
 
         Assertions.assertThat(actual.pagination().sort()).isEqualTo(expected.pagination().sort());
         Assertions.assertThat(actual.filter()).isEqualTo(expected.filter());
@@ -138,40 +142,40 @@ class PageRequestFormatterTest {
     private static Stream<Arguments> should_parse_page_request_from_string() {
         return Stream.of(
                 Arguments.of(
-                        "_p=2&_s=name,-email&profile=jedi&job=master",
+                        "page=2&sort=name,-email&profile=jedi&job=master",
                         PageRequest.of(
-                                Pagination.of(200, 100, Sort.of(new Order(Direction.ASC, "name"), new Order(Direction.DESC, "email"))),
+                                Pagination.of(40, 20, Sort.of(new Order(Direction.ASC, "name"), new Order(Direction.DESC, "email"))),
                                 Criteria.property("job").eq("master").and(Criteria.property("profile").eq("jedi")))),
                 Arguments.of("", PageRequest.all()),
                 Arguments.of(
                         "name",
                         PageRequest.of(
-                                Pagination.of(1, 100),
+                                Pagination.of(1, 20),
                                 Criteria.property("name").eq(true))),
                 Arguments.of("name=%5EObiwan", PageRequest.of(
-                        Pagination.of(1, 100),
+                        Pagination.of(1, 20),
                         Criteria.property("name").startWith("Obiwan"))),
                 Arguments.of("name=%E2%88%8Bbiwa", PageRequest.of(
-                        Pagination.of(1, 100),
+                        Pagination.of(1, 20),
                         Criteria.property("name").contains("biwa"))),
                 Arguments.of("id[]=42&id[]=24&name=%5EObiwan", PageRequest.of(
-                        Pagination.of(1, 100),
+                        Pagination.of(1, 20),
                         Criteria.property("id").in(42, 24)
                                 .and(Criteria.property("name").startWith("Obiwan")))),
                 Arguments.of("id=<42&name=%3CObiwan", PageRequest.of(
-                        Pagination.of(1, 100),
+                        Pagination.of(1, 20),
                         Criteria.property("id").lt(42)
                                 .and(Criteria.property("name").lt("Obiwan")))),
                 Arguments.of("id=>42&name=%3EObiwan", PageRequest.of(
-                        Pagination.of(1, 100),
+                        Pagination.of(1, 20),
                         Criteria.property("id").gt(42)
                                 .and(Criteria.property("name").gt("Obiwan")))),
                 Arguments.of("id=≤42&name=%E2%89%A4Obiwan", PageRequest.of(
-                        Pagination.of(1, 100),
+                        Pagination.of(1, 20),
                         Criteria.property("id").lte(42)
                                 .and(Criteria.property("name").lte("Obiwan")))),
                 Arguments.of("id=≥42&name=%E2%89%A5Obiwan", PageRequest.of(
-                        Pagination.of(1, 100),
+                        Pagination.of(1, 20),
                         Criteria.property("id").gte(42)
                                 .and(Criteria.property("name").gte("Obiwan"))))
         );
@@ -180,7 +184,7 @@ class PageRequestFormatterTest {
     @MethodSource
     @ParameterizedTest
     void should_format_page_request_to_query_string(String expected, PageRequest pr) {
-        String actual = PageRequestFormatter.formatPageRequest(pr);
+        String actual = tested.format(pr);
 
         Assertions.assertThat(assertableQueryString(actual))
                 .isEqualTo(assertableQueryString(expected));
@@ -189,7 +193,7 @@ class PageRequestFormatterTest {
     @SuppressWarnings("unused")
     private static Stream<Arguments> should_format_page_request_to_query_string() {
         return Stream.of(
-                Arguments.of("_from=2&_s=name,-email&profile=jedi&job=master",
+                Arguments.of("from=2&sort=name,-email&profile=jedi&job=master",
                         PageRequest.of(
                                 Pagination.of(2, 100, Sort.of(new Order(Direction.ASC, "name"), new Order(Direction.DESC, "email"))),
                                 Criteria.property("profile").eq("jedi").and(Criteria.property("job").eq("master")))),

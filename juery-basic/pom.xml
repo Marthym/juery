@@ -4,11 +4,20 @@
     <parent>
         <groupId>fr.ght1pc9kc</groupId>
         <artifactId>juery</artifactId>
-        <version>1.1.0</version>
+        <version>1.2.0</version>
     </parent>
 
     <artifactId>juery-basic</artifactId>
     <name>Juery Basic</name>
+
+    <properties>
+        <surefire.argline.opens>
+            --add-opens juery.basic/fr.ght1pc9kc.juery.basic=ALL-UNNAMED
+            --add-opens juery.basic/fr.ght1pc9kc.juery.basic.filter=ALL-UNNAMED
+            --add-opens juery.basic/fr.ght1pc9kc.juery.basic.utils=ALL-UNNAMED
+            --add-opens juery.basic/fr.ght1pc9kc.juery.basic.parser=ALL-UNNAMED
+        </surefire.argline.opens>
+    </properties>
 
     <dependencies>
         <dependency>

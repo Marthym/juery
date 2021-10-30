@@ -4,11 +4,12 @@
 
     <groupId>fr.ght1pc9kc</groupId>
     <artifactId>juery</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
     <packaging>pom</packaging>
 
     <name>Juery</name>
-    <description>Juery is a tiny Java library to manage search and filter query from user to database. api and basic packages
+    <description>Juery is a tiny Java library to manage search and filter query from user to database. api and basic
+        packages
         have no dependencies. They contain everything you need to use Juery. The jooq package contains useful tools for
         projects using the jOOQ DSL.
     </description>
@@ -23,8 +24,8 @@
         <connection>scm:git:git@github.com:Marthym/juery.git</connection>
         <developerConnection>scm:git:git@github.com:Marthym/juery.git</developerConnection>
         <url>https://github.com/Marthym/juery</url>
-      <tag>1.1.0</tag>
-  </scm>
+        <tag>1.2.0</tag>
+    </scm>
 
     <modules>
         <module>juery-api</module>
@@ -37,7 +38,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
 
-        <lombok.version>1.18.20</lombok.version>
+        <lombok.version>1.18.22</lombok.version>
         <jetbrains.version>20.1.0</jetbrains.version>
         <jooq.version>3.14.8</jooq.version>
 
@@ -59,14 +60,7 @@
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
         <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>
 
-        <surefire.argline.opens>
-            --add-opens juery.api/fr.ght1pc9kc.juery.api=ALL-UNNAMED
-            --add-opens juery.api/fr.ght1pc9kc.juery.api.filter=ALL-UNNAMED
-            --add-opens juery.basic/fr.ght1pc9kc.juery.basic=ALL-UNNAMED
-            --add-opens juery.basic/fr.ght1pc9kc.juery.basic.filter=ALL-UNNAMED
-            --add-opens juery.jooq/fr.ght1pc9kc.juery.jooq.pagination=ALL-UNNAMED
-            --add-opens juery.jooq/fr.ght1pc9kc.juery.jooq.filter=ALL-UNNAMED
-        </surefire.argline.opens>
+        <surefire.argline.opens />
     </properties>
 
 
@@ -106,7 +100,6 @@
                 <artifactId>jooq</artifactId>
                 <version>${jooq.version}</version>
             </dependency>
-
 
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
@@ -347,7 +340,6 @@
                         </executions>
                         <configuration>
                             <useAgent>true</useAgent>
-<!--                            <passphrase>${env.GPG_PASSPHRASE}</passphrase>-->
                             <gpgArguments>
                                 <arg>--pinentry-mode</arg>
                                 <arg>loopback</arg>

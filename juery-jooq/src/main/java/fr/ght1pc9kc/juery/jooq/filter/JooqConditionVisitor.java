@@ -6,6 +6,11 @@ import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.temporal.TemporalAccessor;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -77,20 +82,49 @@ public class JooqConditionVisitor implements CriteriaVisitor<Condition> {
     }
 
     @Override
+    public <T> Condition visitGreaterThanEquals(GreaterThanEqualsOperation<T> operation) {
+        return readFieldToCondition(operation, Field::ge);
+    }
+
+    @Override
     public <T> Condition visitLowerThan(LowerThanOperation<T> operation) {
         return readFieldToCondition(operation, Field::lt);
     }
 
+    @Override
+    public <T> Condition visitLowerThanEquals(LowerThanEqualsOperation<T> operation) {
+        return readFieldToCondition(operation, Field::le);
+    }
+
     @SuppressWarnings("unchecked")
-    private <T> Condition readFieldToCondition(BiOperand<T> operation, BiFunction<Field<T>, T, Condition> op) {
+    private <T, R> Condition readFieldToCondition(BiOperand<R> operation, BiFunction<Field<T>, T, Condition> op) {
         return Optional.ofNullable(propertiesSupplier.apply(operation.field.property))
                 .map(f -> {
                     if (operation.value.isNull()) {
                         return f.isNull();
+
+                    } else if (f.getDataType().isDate()) {
+                        if (operation.value.value instanceof Instant) {
+                            return op.apply((Field<T>) f, (T) Instant.from((TemporalAccessor) operation.value.value)
+                                    .atOffset(ZoneOffset.UTC).toLocalDate());
+                        } else {
+                            return op.apply((Field<T>) f, (T) LocalDate.from((TemporalAccessor) operation.value.value));
+                        }
+
+                    } else if (f.getDataType().isDateTime()) {
+                        if (operation.value.value instanceof Instant) {
+                            return op.apply((Field<T>) f, (T) Instant.from((TemporalAccessor) operation.value.value)
+                                    .atOffset(ZoneOffset.UTC).toLocalDateTime());
+                        } else if (operation.value.value instanceof LocalDate) {
+                            return op.apply((Field<T>) f, (T) LocalDate.from((TemporalAccessor) operation.value.value)
+                                    .atStartOfDay());
+                        } else {
+                            return op.apply((Field<T>) f, (T) LocalDateTime.from((TemporalAccessor) operation.value.value));
+                        }
+
                     } else {
-                        return op.apply((Field<T>) f, operation.value.value);
+                        return op.apply((Field<T>) f, (T) operation.value.value);
                     }
-                })
-                .orElse(DSL.noCondition());
+                }).orElse(DSL.noCondition());
     }
 }
