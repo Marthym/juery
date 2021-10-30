@@ -10,6 +10,13 @@
     <artifactId>juery-jooq</artifactId>
     <name>Juery jOOQ</name>
 
+    <properties>
+        <surefire.argline.opens>
+            --add-opens juery.jooq/fr.ght1pc9kc.juery.jooq.pagination=ALL-UNNAMED
+            --add-opens juery.jooq/fr.ght1pc9kc.juery.jooq.filter=ALL-UNNAMED
+        </surefire.argline.opens>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>fr.ght1pc9kc</groupId>
