@@ -32,6 +32,7 @@ import static java.util.function.Predicate.not;
 
 @RequiredArgsConstructor
 public final class QueryStringParserImpl implements QueryStringParser {
+    private static final int PAGE_START_INDEX = 0;
     private static final QueryStringFilterVisitor CRITERIA_FORMATTER = new QueryStringFilterVisitor();
 
     private final ParserConfiguration config;
@@ -180,7 +181,7 @@ public final class QueryStringParserImpl implements QueryStringParser {
         int offset = Optional.ofNullable(queryString.get(config.fromParameter()))
                 .flatMap(l -> Optional.ofNullable(l.get(0)))
                 .map(Integer::parseInt)
-                .orElse(1);
+                .orElse(PAGE_START_INDEX);
 
         int maxTo = offset + config.maxPageSize() - 1;
 
