@@ -54,26 +54,26 @@ class QueryStringParserImplDefaultTest {
                 Arguments.of(
                         Map.of("_pp", List.of("200")),
                         PageRequest.of(
-                                Pagination.of(1, 100, Sort.of()),
+                                Pagination.of(0, 100, Sort.of()),
                                 Criteria.none())),
                 Arguments.of(
                         Map.of(
                                 "_pp", List.of("200"),
                                 "name", List.of("")),
                         PageRequest.of(
-                                Pagination.of(1, 100, Sort.of()),
+                                Pagination.of(0, 100, Sort.of()),
                                 Criteria.property("name").eq(true))),
                 Arguments.of(
                         Map.of(
                                 "_pp", List.of("200"),
                                 "name", List.of()),
                         PageRequest.of(
-                                Pagination.of(1, 100, Sort.of()),
+                                Pagination.of(0, 100, Sort.of()),
                                 Criteria.property("name").eq(true))),
                 Arguments.of(
                         Map.of("_s", List.of("name", "-email")),
                         PageRequest.of(
-                                Pagination.of(1, 100,
+                                Pagination.of(0, 100,
                                         Sort.of(new Order(Direction.ASC, "name"), new Order(Direction.DESC, "email"))),
                                 Criteria.none())),
                 Arguments.of(
@@ -139,35 +139,33 @@ class QueryStringParserImplDefaultTest {
                                 Pagination.of(200, 100, Sort.of(new Order(Direction.ASC, "name"), new Order(Direction.DESC, "email"))),
                                 Criteria.property("job").eq("master").and(Criteria.property("profile").eq("jedi")))),
                 Arguments.of("", PageRequest.all()),
-                Arguments.of(
-                        "name",
-                        PageRequest.of(
-                                Pagination.of(1, 100),
-                                Criteria.property("name").eq(true))),
+                Arguments.of("name", PageRequest.of(
+                        Pagination.of(0, 100),
+                        Criteria.property("name").eq(true))),
                 Arguments.of("name=%5EObiwan", PageRequest.of(
-                        Pagination.of(1, 100),
+                        Pagination.of(0, 100),
                         Criteria.property("name").startWith("Obiwan"))),
                 Arguments.of("name=%E2%88%8Bbiwa", PageRequest.of(
-                        Pagination.of(1, 100),
+                        Pagination.of(0, 100),
                         Criteria.property("name").contains("biwa"))),
                 Arguments.of("id[]=42&id[]=24&name=%5EObiwan", PageRequest.of(
-                        Pagination.of(1, 100),
+                        Pagination.of(0, 100),
                         Criteria.property("id").in(42, 24)
                                 .and(Criteria.property("name").startWith("Obiwan")))),
                 Arguments.of("id=<42&name=%3CObiwan", PageRequest.of(
-                        Pagination.of(1, 100),
+                        Pagination.of(0, 100),
                         Criteria.property("id").lt(42)
                                 .and(Criteria.property("name").lt("Obiwan")))),
                 Arguments.of("id=>42&name=%3EObiwan", PageRequest.of(
-                        Pagination.of(1, 100),
+                        Pagination.of(0, 100),
                         Criteria.property("id").gt(42)
                                 .and(Criteria.property("name").gt("Obiwan")))),
                 Arguments.of("id=≤42&name=%E2%89%A4Obiwan", PageRequest.of(
-                        Pagination.of(1, 100),
+                        Pagination.of(0, 100),
                         Criteria.property("id").lte(42)
                                 .and(Criteria.property("name").lte("Obiwan")))),
                 Arguments.of("id=≥42&name=%E2%89%A5Obiwan", PageRequest.of(
-                        Pagination.of(1, 100),
+                        Pagination.of(0, 100),
                         Criteria.property("id").gte(42)
                                 .and(Criteria.property("name").gte("Obiwan"))))
         );
