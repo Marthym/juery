@@ -27,7 +27,13 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static fr.ght1pc9kc.juery.basic.filter.QueryStringFilterVisitor.*;
+import static fr.ght1pc9kc.juery.basic.filter.QueryStringFilterVisitor.QS_CONTAINS_CHAR;
+import static fr.ght1pc9kc.juery.basic.filter.QueryStringFilterVisitor.QS_END_CHAR;
+import static fr.ght1pc9kc.juery.basic.filter.QueryStringFilterVisitor.QS_GTE_CHAR;
+import static fr.ght1pc9kc.juery.basic.filter.QueryStringFilterVisitor.QS_GT_CHAR;
+import static fr.ght1pc9kc.juery.basic.filter.QueryStringFilterVisitor.QS_LTE_CHAR;
+import static fr.ght1pc9kc.juery.basic.filter.QueryStringFilterVisitor.QS_LT_CHAR;
+import static fr.ght1pc9kc.juery.basic.filter.QueryStringFilterVisitor.QS_START_CHAR;
 import static java.util.function.Predicate.not;
 
 @RequiredArgsConstructor
@@ -119,43 +125,45 @@ public final class QueryStringParserImpl implements QueryStringParser {
 
         // Parse operation
         BiFunction<CriterionProperty, Object, Criteria> operation = CriterionProperty::eq;
+        Object typedValue = null;
         if (!StringUtils.isBlank(strValue)) {
             switch (strValue.charAt(0)) {
                 case QS_START_CHAR:
-                    strValue = strValue.substring(1);
                     operation = CriterionProperty::startWith;
+                    typedValue = parseValueType(strValue.substring(1));
                     break;
                 case QS_END_CHAR:
-                    strValue = strValue.substring(1);
                     operation = CriterionProperty::endWith;
+                    typedValue = parseValueType(strValue.substring(1));
                     break;
                 case QS_CONTAINS_CHAR:
-                    strValue = strValue.substring(1);
                     operation = CriterionProperty::contains;
+                    typedValue = strValue.substring(1);
                     break;
                 case QS_LT_CHAR:
-                    strValue = strValue.substring(1);
                     operation = CriterionProperty::lt;
+                    typedValue = parseValueType(strValue.substring(1));
                     break;
                 case QS_GT_CHAR:
-                    strValue = strValue.substring(1);
                     operation = CriterionProperty::gt;
+                    typedValue = parseValueType(strValue.substring(1));
                     break;
                 case QS_LTE_CHAR:
-                    strValue = strValue.substring(1);
                     operation = CriterionProperty::lte;
+                    typedValue = parseValueType(strValue.substring(1));
                     break;
                 case QS_GTE_CHAR:
-                    strValue = strValue.substring(1);
                     operation = CriterionProperty::gte;
+                    typedValue = parseValueType(strValue.substring(1));
                     break;
                 default:
+                    typedValue = parseValueType(strValue);
             }
+        } else {
+            typedValue = parseValueType(strValue);
         }
 
-        Object value = parseValueType(strValue);
-
-        return operation.apply(Criteria.property(key), value);
+        return operation.apply(Criteria.property(key), typedValue);
     }
 
     private Pagination parsePaginationByPage(Map<String, List<String>> queryString) {
