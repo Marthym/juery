@@ -102,7 +102,13 @@ class QueryStringParserImplDefaultTest {
                         PageRequest.of(
                                 Pagination.of(11, 10,
                                         Sort.of(new Order(Direction.ASC, "name"), new Order(Direction.DESC, "email"))),
-                                Criteria.none()))
+                                Criteria.none())),
+                Arguments.of(
+                        Map.of(
+                                "name", List.of("∋t")
+                        ),
+                        PageRequest.of(Pagination.of(0, 100, Sort.of()),
+                                Criteria.property("name").contains("t")))
         );
     }
 
