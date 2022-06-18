@@ -1,4 +1,4 @@
-# Juery [![](https://img.shields.io/github/release/Marthym/juery.svg)](https://GitHub.com/Marthym/juery/releases/) [![GitHub license](https://img.shields.io/github/license/Marthym/juery.svg)](https://github.com/Marthym/juery/blob/master/LICENSE)
+# Juery [![](https://img./github/release/Marthym/juery.svg)](https://GitHub.com/Marthym/juery/releases/) [![GitHub license](https://img.shields.io/github/license/Marthym/juery.svg)](https://github.com/Marthym/juery/blob/master/LICENSE)
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Marthym_juery&metric=alert_status)](https://sonarcloud.io/dashboard?id=Marthym_juery)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Marthym_juery&metric=coverage)](https://sonarcloud.io/dashboard?id=Marthym_juery)
@@ -16,26 +16,26 @@ Use the package manager [maven](https://maven.apache.org/) to install juery.
 <dependency>
     <groupId>fr.ght1pc9kc</groupId>
     <artifactId>juery-api</artifactId>
-    <version>1.2.0</version>
+    <version>VERSION</version>
 </dependency>
 <dependency>
     <groupId>fr.ght1pc9kc</groupId>
     <artifactId>juery-basic</artifactId>
-    <version>1.2.0</version>
+    <version>VERSION</version>
 </dependency>
 <dependency>
     <groupId>fr.ght1pc9kc</groupId>
     <artifactId>juery-jooq</artifactId>
-    <version>1.2.0</version>
+    <version>VERSION</version>
 </dependency>
 ```
 
 for gradle
 
 ```groovy
-compile "fr.ght1pc9kc:juery-api:1.2.0"
-compile "fr.ght1pc9kc:juery-basic:1.2.0"
-compile "fr.ght1pc9kc:juery-jooq:1.2.0"
+compile "fr.ght1pc9kc:juery-api:VERSION"
+compile "fr.ght1pc9kc:juery-basic:VERSION"
+compile "fr.ght1pc9kc:juery-jooq:VERSION"
 ```
 
 ## Usage
