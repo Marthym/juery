@@ -4,14 +4,13 @@
 
     <groupId>fr.ght1pc9kc</groupId>
     <artifactId>juery</artifactId>
-    <version>1.2.2</version>
+    <version>1.2.3</version>
     <packaging>pom</packaging>
 
     <name>Juery</name>
     <description>Juery is a tiny Java library to manage search and filter query from user to database. api and basic
-        packages
-        have no dependencies. They contain everything you need to use Juery. The jooq package contains useful tools for
-        projects using the jOOQ DSL.
+        packages have no dependencies. They contain everything you need to use Juery. The jooq package contains useful
+        tools for projects using the jOOQ DSL.
     </description>
     <url>https://github.com/Marthym/juery</url>
     <licenses>
@@ -24,7 +23,7 @@
         <connection>scm:git:git@github.com:Marthym/juery.git</connection>
         <developerConnection>scm:git:git@github.com:Marthym/juery.git</developerConnection>
         <url>https://github.com/Marthym/juery</url>
-        <tag>1.2.2</tag>
+        <tag>1.2.3</tag>
     </scm>
 
     <modules>
@@ -35,30 +34,29 @@
 
     <properties>
         <encoding>UTF-8</encoding>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
 
         <lombok.version>1.18.24</lombok.version>
-        <jetbrains.version>23.0.0</jetbrains.version>
-        <jooq.version>3.16.7</jooq.version>
+        <jetbrains.version>23.1.0</jetbrains.version>
+        <jooq.version>3.17.6</jooq.version>
 
-        <junit.version>5.8.2</junit.version>
+        <junit.version>5.9.1</junit.version>
         <assertj.version>3.23.1</assertj.version>
-        <slf4j.version>1.7.36</slf4j.version>
-        <logback.version>1.2.11</logback.version>
+        <slf4j.version>2.0.6</slf4j.version>
+        <logback.version>1.4.5</logback.version>
 
-        <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
-        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
-        <maven-release-plugin.version>3.0.0-M6</maven-release-plugin.version>
-        <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
-        <maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
+        <maven-compiler-plugin.version>3.10.1</maven-compiler-plugin.version>
+        <maven-deploy-plugin.version>3.0.0</maven-deploy-plugin.version>
         <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
-        <maven-scm-provider-gitexe.version>1.13.0</maven-scm-provider-gitexe.version>
+        <maven-javadoc-plugin.version>3.4.1</maven-javadoc-plugin.version>
+        <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
         <maven-scm-api.version>1.13.0</maven-scm-api.version>
-        <flatten-maven-plugin.version>1.2.7</flatten-maven-plugin.version>
+        <maven-scm-provider-gitexe.version>1.13.0</maven-scm-provider-gitexe.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
-        <maven-javadoc-plugin.version>3.4.0</maven-javadoc-plugin.version>
+        <maven-surefire-plugin.version>3.0.0-M7</maven-surefire-plugin.version>
+        <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
 
         <surefire.argline.opens />
     </properties>

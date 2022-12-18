@@ -5,7 +5,13 @@ import fr.ght1pc9kc.juery.api.Pagination;
 import fr.ght1pc9kc.juery.api.pagination.Order;
 import fr.ght1pc9kc.juery.api.pagination.Sort;
 import lombok.experimental.UtilityClass;
-import org.jooq.*;
+import org.jooq.Field;
+import org.jooq.Record;
+import org.jooq.Select;
+import org.jooq.SelectFinalStep;
+import org.jooq.SelectQuery;
+import org.jooq.SortField;
+import org.jooq.SortOrder;
 
 import java.util.Map;
 
