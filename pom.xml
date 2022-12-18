@@ -52,7 +52,7 @@
         <maven-deploy-plugin.version>3.0.0</maven-deploy-plugin.version>
         <maven-gpg-plugin.version>3.0.1</maven-gpg-plugin.version>
         <maven-javadoc-plugin.version>3.4.1</maven-javadoc-plugin.version>
-        <maven-release-plugin.version>3.0.0-M7</maven-release-plugin.version>
+        <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
         <maven-scm-api.version>1.13.0</maven-scm-api.version>
         <maven-scm-provider-gitexe.version>1.13.0</maven-scm-provider-gitexe.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
