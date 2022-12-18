@@ -115,7 +115,7 @@ public final class QueryStringParserImpl implements QueryStringParser {
         List<Object> filteredListValues = paramValue.stream()
                 .distinct()
                 .map(QueryStringParserImpl::parseValueType)
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
 
         if (paramValue.size() > 1) {
             return Criteria.property(key).in(filteredListValues);

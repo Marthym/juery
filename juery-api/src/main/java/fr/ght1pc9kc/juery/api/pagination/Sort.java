@@ -19,7 +19,7 @@ public class Sort {
     public static Sort of(Direction direction, String... properties) {
         return new Sort(Arrays.stream(properties)
                 .map(p -> new Order(direction, p))
-                .collect(Collectors.toUnmodifiableList()));
+                .toList());
     }
 
     public static Sort of(Order... orders) {

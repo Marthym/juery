@@ -25,7 +25,7 @@ public class ListPropertiesCriteriaVisitor implements CriteriaVisitor<List<Strin
         return operation.andCriteria.stream()
                 .flatMap(a -> a.accept(this).stream())
                 .distinct()
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
     }
 
     @Override
@@ -38,7 +38,7 @@ public class ListPropertiesCriteriaVisitor implements CriteriaVisitor<List<Strin
         return operation.orCriteria.stream()
                 .flatMap(a -> a.accept(this).stream())
                 .distinct()
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
     }
 
     @Override
