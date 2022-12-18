@@ -4,7 +4,7 @@
 
     <groupId>fr.ght1pc9kc</groupId>
     <artifactId>juery</artifactId>
-    <version>1.2.3</version>
+    <version>1.2.4-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Juery</name>
@@ -23,7 +23,7 @@
         <connection>scm:git:git@github.com:Marthym/juery.git</connection>
         <developerConnection>scm:git:git@github.com:Marthym/juery.git</developerConnection>
         <url>https://github.com/Marthym/juery</url>
-        <tag>1.2.3</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <modules>
