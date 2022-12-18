@@ -4,7 +4,7 @@
     <parent>
         <groupId>fr.ght1pc9kc</groupId>
         <artifactId>juery</artifactId>
-        <version>1.2.3-SNAPSHOT</version>
+        <version>1.2.3</version>
     </parent>
 
     <artifactId>juery-api</artifactId>
