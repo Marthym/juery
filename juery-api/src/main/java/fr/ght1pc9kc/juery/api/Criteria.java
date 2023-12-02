@@ -1,16 +1,20 @@
 package fr.ght1pc9kc.juery.api;
 
-import fr.ght1pc9kc.juery.api.filter.*;
+import fr.ght1pc9kc.juery.api.filter.AndOperation;
+import fr.ght1pc9kc.juery.api.filter.CriteriaVisitor;
+import fr.ght1pc9kc.juery.api.filter.CriterionProperty;
+import fr.ght1pc9kc.juery.api.filter.NoCriterion;
+import fr.ght1pc9kc.juery.api.filter.NotOperation;
+import fr.ght1pc9kc.juery.api.filter.OrOperation;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
  * The main class to use <strong>Juery</strong>
- *
+ * <p>
  * Some examples:
  *
  * <pre>{@code
@@ -29,14 +33,14 @@ public interface Criteria {
         List<Criteria> filtered = Arrays.stream(andCriteria)
                 .filter(Predicate.not(Criteria::isEmpty))
                 .flatMap(a -> {
-                    if (a instanceof AndOperation) {
-                        return ((AndOperation) a).andCriteria.stream();
+                    if (a instanceof AndOperation andOp) {
+                        return andOp.andCriteria.stream();
                     } else {
                         return Stream.of(a);
                     }
                 })
                 .distinct()
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
         if (filtered.isEmpty()) {
             return Criteria.none();
         } else if (filtered.size() == 1) {
@@ -49,14 +53,14 @@ public interface Criteria {
         List<Criteria> filtered = Arrays.stream(orCriteria)
                 .filter(Predicate.not(Criteria::isEmpty))
                 .flatMap(a -> {
-                    if (a instanceof OrOperation) {
-                        return ((OrOperation) a).orCriteria.stream();
+                    if (a instanceof OrOperation orOpe) {
+                        return orOpe.orCriteria.stream();
                     } else {
                         return Stream.of(a);
                     }
                 })
                 .distinct()
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
         if (filtered.isEmpty()) {
             return Criteria.none();
         } else if (filtered.size() == 1) {
@@ -69,8 +73,8 @@ public interface Criteria {
         if (criteria.isEmpty()) {
             return criteria;
         }
-        if (criteria instanceof NotOperation) {
-            return ((NotOperation) criteria).negative;
+        if (criteria instanceof NotOperation notOp) {
+            return notOp.negative;
         }
         return new NotOperation(criteria);
     }
