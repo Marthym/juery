@@ -4,5 +4,6 @@ import java.util.List;
 
 public class SchemaSample {
 
-    public static final List<String> IDS_FIELD = List.of("_id");
+    public static final String ID = "_id";
+    public static final List<String> IDS_FIELD = List.of(ID);
 }

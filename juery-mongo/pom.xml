@@ -9,24 +9,18 @@
         <version>1.2.5-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.example</groupId>
     <artifactId>juery-mongo</artifactId>
-
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+    <name>Juery Mongo</name>
 
     <dependencies>
         <dependency>
             <groupId>org.mongodb</groupId>
-            <artifactId>mongodb-driver-sync</artifactId>
+            <artifactId>mongodb-driver-core</artifactId>
         </dependency>
         <dependency>
             <groupId>fr.ght1pc9kc</groupId>
             <artifactId>juery-api</artifactId>
-            <version>1.2.5-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
 
