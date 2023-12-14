@@ -30,6 +30,7 @@
         <module>juery-api</module>
         <module>juery-basic</module>
         <module>juery-jooq</module>
+        <module>juery-mongo</module>
     </modules>
 
     <properties>
@@ -56,6 +57,7 @@
         <maven-scm-provider-gitexe.version>2.0.1</maven-scm-provider-gitexe.version>
         <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
         <maven-surefire-plugin.version>3.2.2</maven-surefire-plugin.version>
+        <mongodb-driver.version>4.9.0</mongodb-driver.version>
         <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
 
         <surefire.argline.opens />
@@ -75,6 +77,10 @@
             <name>Frédéric Combes</name>
             <organization>ght1pc9kc.fr</organization>
             <organizationUrl>https://blog.ght1pc9kc.fr/</organizationUrl>
+        </developer>
+        <developer>
+            <id>drblu1</id>
+            <name>Yann Yavo</name>
         </developer>
     </developers>
 
@@ -97,6 +103,12 @@
                 <groupId>org.jooq</groupId>
                 <artifactId>jooq</artifactId>
                 <version>${jooq.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mongodb</groupId>
+                <artifactId>mongodb-driver-core</artifactId>
+                <version>${mongodb-driver.version}</version>
             </dependency>
 
             <dependency>
