@@ -12,18 +12,16 @@ import fr.ght1pc9kc.juery.api.filter.LowerThanOperation;
 import fr.ght1pc9kc.juery.api.filter.NoCriterion;
 import fr.ght1pc9kc.juery.api.filter.NotOperation;
 import fr.ght1pc9kc.juery.api.filter.OrOperation;
+import lombok.RequiredArgsConstructor;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 public class MongoFilterVisitor implements CriteriaVisitor<Bson> {
 
     private final List<String> idsFields;
-
-    public MongoFilterVisitor(List<String> properties) {
-        this.idsFields = properties;
-    }
 
     @Override
     public Bson visitNoCriteria(NoCriterion none) {
