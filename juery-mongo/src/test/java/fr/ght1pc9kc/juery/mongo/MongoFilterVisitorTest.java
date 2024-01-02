@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import static fr.ght1pc9kc.juery.database.SchemaSample.IDS_FIELD;
+import static fr.ght1pc9kc.juery.database.SchemaSample.PROPERTIES_MAPPING;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -21,7 +22,7 @@ class MongoFilterVisitorTest {
 
     private static final LocalDateTime NOW = LocalDateTime.parse("2020-12-11T10:20:42");
 
-    private final MongoFilterVisitor tested = new MongoFilterVisitor(IDS_FIELD);
+    private final MongoFilterVisitor tested = new MongoFilterVisitor(IDS_FIELD, PROPERTIES_MAPPING);
 
     @ParameterizedTest
     @MethodSource("provideSCriteria")
@@ -54,7 +55,7 @@ class MongoFilterVisitorTest {
                         Filters.not(Filters.in("id", List.of(1, 2)))),
                 Arguments.of(Criteria.not(Criteria.property(SchemaSample.ID).in(List.of("632046635f85998fed60c32e", "632046635f85998fed60c32e"))),
                         Filters.not(Filters.in(
-                                SchemaSample.ID,
+                                "_id",
                                 List.of(new ObjectId("632046635f85998fed60c32e"),
                                         new ObjectId("632046635f85998fed60c32e"))))),
                 Arguments.of(Criteria.and(Criteria.property("id").eq(1),
@@ -63,7 +64,7 @@ class MongoFilterVisitorTest {
                 Arguments.of(Criteria.none(),
                         Filters.empty()),
                 Arguments.of(Criteria.property(SchemaSample.ID).lt("632046635f85998fed60c32e"),
-                        Filters.lt(SchemaSample.ID, new ObjectId("632046635f85998fed60c32e")))
+                        Filters.lt("_id", new ObjectId("632046635f85998fed60c32e")))
         );
     }
 
