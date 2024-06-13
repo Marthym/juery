@@ -10,9 +10,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 class PageRequestTest {
     @Test
     void should_create_page_request() {
-        PageRequest actual = PageRequest.of(1, 5);
+        PageRequest actual = PageRequest.of(Pagination.of(1, 5), Criteria.none());
 
-        Assertions.assertThat(actual.pagination().page()).isEqualTo(1);
         Assertions.assertThat(actual.pagination().size()).isEqualTo(5);
         Assertions.assertThat(actual.filter()).isEqualTo(Criteria.none());
         Assertions.assertThat(actual.pagination().sort()).isEqualTo(Sort.of());
@@ -20,7 +19,7 @@ class PageRequestTest {
 
     @Test
     void should_create_page_request_zero() {
-        PageRequest actual = PageRequest.of(-1, 10);
+        PageRequest actual = PageRequest.of(Pagination.ALL, Criteria.none());
 
         Assertions.assertThat(actual).isEqualTo(PageRequest.all());
     }
@@ -40,8 +39,7 @@ class PageRequestTest {
         PageRequest actual = PageRequest.all(Criteria.property("name").eq("Obiwan"))
                 .and(Criteria.property("faction").eq("jedi"));
 
-        Assertions.assertThat(actual.pagination().page()).isEqualTo(-1);
-        Assertions.assertThat(actual.pagination().size()).isEqualTo(-1);
+        Assertions.assertThat(actual.pagination().size()).isEqualTo(Pagination.ALL.size());
         Assertions.assertThat(actual.filter()).isEqualTo(Criteria.and(
                 Criteria.property("name").eq("Obiwan"),
                 Criteria.property("faction").eq("jedi")
@@ -56,7 +54,6 @@ class PageRequestTest {
                 Criteria.property("faction").eq("jedi")
         );
 
-        Assertions.assertThat(actual.pagination().page()).isEqualTo(1);
         Assertions.assertThat(actual.pagination().size()).isEqualTo(10);
         Assertions.assertThat(actual.filter()).isEqualTo(Criteria.property("faction").eq("jedi"));
         Assertions.assertThat(actual.pagination().sort()).isEqualTo(Sort.of(Direction.ASC, "name"));
