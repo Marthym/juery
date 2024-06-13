@@ -1,16 +1,12 @@
 package fr.ght1pc9kc.juery.api.pagination;
 
-import lombok.Value;
-
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
-@Value
-public class Sort {
+public record Sort(
+        List<Order> orders
+) {
     public static final Sort UNSORTED = new Sort(List.of());
-
-    List<Order> orders;
 
     public static Sort of() {
         return UNSORTED;

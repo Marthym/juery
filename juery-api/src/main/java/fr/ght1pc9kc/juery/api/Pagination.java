@@ -1,13 +1,15 @@
 package fr.ght1pc9kc.juery.api;
 
 import fr.ght1pc9kc.juery.api.pagination.Sort;
-import lombok.Value;
 
 /**
  * The pagination query parameters.
  */
-@Value
-public final class Pagination {
+public record Pagination(
+        int offset,
+        int size,
+        Sort sort
+) {
     /**
      * The {@code FIRST} element of the pageable list
      */
@@ -15,11 +17,7 @@ public final class Pagination {
     /**
      * {@code ALL} the elements of the pageable list
      */
-    public static final Pagination ALL = new Pagination(-1, -1, Sort.UNSORTED);
-
-    final int offset;
-    final int size;
-    final Sort sort;
+    public static final Pagination ALL = new Pagination(0, Integer.MAX_VALUE, Sort.UNSORTED);
 
     /**
      * Create a {@link Pagination} object
@@ -54,18 +52,5 @@ public final class Pagination {
         } else {
             return new Pagination(offset, size, sort);
         }
-    }
-
-    /**
-     * @deprecated Replaced by offset
-     */
-    @Deprecated(since = "1.2.0", forRemoval = true)
-    public int page() {
-        if (size < 0) {
-            return -1;
-        } else if (offset <= size) {
-            return 1;
-        }
-        return (int) Math.floor((double) offset / (double) size);
     }
 }
