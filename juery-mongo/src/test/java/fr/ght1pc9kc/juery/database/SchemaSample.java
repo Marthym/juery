@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class SchemaSample {
 
-    public static final String ID = "myID";
+    public static final String ID = "_id";
     public static final List<String> IDS_FIELD = List.of(ID);
     public static final Map<String, String> PROPERTIES_MAPPING = Map.of(
             ID, "_id",

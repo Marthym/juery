@@ -1,19 +1,15 @@
 package fr.ght1pc9kc.juery.api.pagination;
 
-import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 
-@Value
-public class Order {
-    Direction direction;
-    String property;
-
-    public Order(@NotNull Direction direction, @NotNull String property) {
+public record Order(
+        Direction direction,
+        String property
+) {
+    public Order {
         if (property.isBlank()) {
             throw new IllegalArgumentException("The property must not be blank !");
         }
-        this.direction = direction;
-        this.property = property;
     }
 
     public static Order asc(@NotNull String prop) {

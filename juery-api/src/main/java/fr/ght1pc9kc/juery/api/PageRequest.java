@@ -1,8 +1,5 @@
 package fr.ght1pc9kc.juery.api;
 
-import fr.ght1pc9kc.juery.api.pagination.Sort;
-import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import lombok.With;
 
 /**
@@ -16,13 +13,12 @@ import lombok.With;
  *     .build();
  * }</pre>
  */
-@Value
-@RequiredArgsConstructor
-public class PageRequest {
+public record PageRequest(
+        Pagination pagination,
+        @With Criteria filter
+) {
     private static final PageRequest ALL = new PageRequest(Pagination.ALL, Criteria.none());
 
-    final Pagination pagination;
-    @With final Criteria filter;
 
     /**
      * Create a {@link PageRequest} with specified {@link Pagination} and {@link Criteria} filters.
@@ -36,20 +32,6 @@ public class PageRequest {
             return ALL;
         }
         return new PageRequest(page, filter);
-    }
-
-    /**
-     * Create a {@link PageRequest} with Pagination without any filter
-     *
-     * @param page The page number
-     * @param size The size of one page
-     * @return The request
-     * @deprecated Use instead {@link PageRequest#of(Pagination, Criteria)}
-     */
-    @Deprecated(forRemoval = true, since = "1.1.0")
-    public static PageRequest of(int page, int size) {
-        Pagination pagination = (page < 0 || size < 0) ? Pagination.ALL : Pagination.of(page, size);
-        return of(pagination, Criteria.none());
     }
 
     /**
@@ -81,20 +63,5 @@ public class PageRequest {
 
     public PageRequest and(Criteria criteria) {
         return new PageRequest(pagination, filter.and(criteria));
-    }
-
-    /**
-     * Create a {@link PageRequest} with pagination and filtering
-     *
-     * @param page   The page number
-     * @param size   The size of one page
-     * @param sort   The sorting data
-     * @param filter The criteria filters
-     * @deprecated Use instead {@link PageRequest#of(Pagination, Criteria)}
-     */
-    @Deprecated(forRemoval = true, since = "1.1.0")
-    PageRequest(int page, int size, Sort sort, Criteria filter) {
-        this.pagination = Pagination.of(page, size, sort);
-        this.filter = filter;
     }
 }
