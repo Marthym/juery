@@ -3,8 +3,10 @@ package fr.ght1pc9kc.juery.mongo;
 import com.mongodb.client.model.Filters;
 import fr.ght1pc9kc.juery.api.Criteria;
 import fr.ght1pc9kc.juery.database.SchemaSample;
+import org.assertj.core.api.SoftAssertions;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -22,7 +24,17 @@ class MongoFilterVisitorTest {
 
     private static final LocalDateTime NOW = LocalDateTime.parse("2020-12-11T10:20:42");
 
-    private final MongoFilterVisitor tested = new MongoFilterVisitor(IDS_FIELD, PROPERTIES_MAPPING);
+    private final MongoFilterVisitor tested = MongoFilterVisitor.getMongoFilter(IDS_FIELD, PROPERTIES_MAPPING);
+
+    @Test
+    void should_create_visitor() {
+        SoftAssertions.assertSoftly(soft -> {
+            soft.assertThat(MongoFilterVisitor.getMongoFilter()).isNotNull();
+            soft.assertThat(MongoFilterVisitor.getMongoFilter(IDS_FIELD, PROPERTIES_MAPPING)).isNotNull();
+            soft.assertThat(MongoFilterVisitor.getMongoFilter(PROPERTIES_MAPPING)).isNotNull();
+            soft.assertThat(MongoFilterVisitor.getMongoFilter(IDS_FIELD)).isNotNull();
+        });
+    }
 
     @ParameterizedTest
     @MethodSource("provideSCriteria")
