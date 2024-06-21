@@ -22,7 +22,7 @@ class MongoFilterVisitorTest {
 
     private static final LocalDateTime NOW = LocalDateTime.parse("2020-12-11T10:20:42");
 
-    private final MongoFilterVisitor tested = new MongoFilterVisitor(IDS_FIELD, PROPERTIES_MAPPING);
+    private final MongoFilterVisitor tested = MongoFilterVisitor.getMongoFilter(IDS_FIELD, PROPERTIES_MAPPING);
 
     @ParameterizedTest
     @MethodSource("provideSCriteria")
