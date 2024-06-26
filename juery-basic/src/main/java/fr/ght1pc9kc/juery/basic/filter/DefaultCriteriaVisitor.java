@@ -1,7 +1,21 @@
 package fr.ght1pc9kc.juery.basic.filter;
 
 import fr.ght1pc9kc.juery.api.Criteria;
-import fr.ght1pc9kc.juery.api.filter.*;
+import fr.ght1pc9kc.juery.api.filter.AndOperation;
+import fr.ght1pc9kc.juery.api.filter.ContainsOperation;
+import fr.ght1pc9kc.juery.api.filter.CriteriaVisitor;
+import fr.ght1pc9kc.juery.api.filter.CriterionValue;
+import fr.ght1pc9kc.juery.api.filter.EndWithOperation;
+import fr.ght1pc9kc.juery.api.filter.EqualOperation;
+import fr.ght1pc9kc.juery.api.filter.GreaterThanEqualsOperation;
+import fr.ght1pc9kc.juery.api.filter.GreaterThanOperation;
+import fr.ght1pc9kc.juery.api.filter.InOperation;
+import fr.ght1pc9kc.juery.api.filter.LowerThanEqualsOperation;
+import fr.ght1pc9kc.juery.api.filter.LowerThanOperation;
+import fr.ght1pc9kc.juery.api.filter.NoCriterion;
+import fr.ght1pc9kc.juery.api.filter.NotOperation;
+import fr.ght1pc9kc.juery.api.filter.OrOperation;
+import fr.ght1pc9kc.juery.api.filter.StartWithOperation;
 
 /**
  * The Visitor do only <b>nothing</b>. Extend it to apply some modifications on
@@ -15,17 +29,22 @@ public class DefaultCriteriaVisitor implements CriteriaVisitor<Criteria> {
 
     @Override
     public Criteria visitAnd(AndOperation operation) {
-        return operation;
+        return Criteria.and(operation.andCriteria().stream()
+                .map(c -> c.accept(this))
+                .toArray(Criteria[]::new));
     }
 
     @Override
     public Criteria visitNot(NotOperation operation) {
-        return operation;
+        Criteria accepted = operation.negative().accept(this);
+        return (accepted == operation.negative()) ? operation : Criteria.not(accepted);
     }
 
     @Override
     public Criteria visitOr(OrOperation operation) {
-        return operation;
+        return Criteria.or(operation.orCriteria().stream()
+                .map(c -> c.accept(this))
+                .toArray(Criteria[]::new));
     }
 
     @Override

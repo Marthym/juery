@@ -4,7 +4,7 @@
 
     <groupId>fr.ght1pc9kc</groupId>
     <artifactId>juery</artifactId>
-    <version>1.4.1</version>
+    <version>1.4.2</version>
     <packaging>pom</packaging>
 
     <name>Juery</name>
@@ -23,7 +23,7 @@
         <connection>scm:git:git@github.com:Marthym/juery.git</connection>
         <developerConnection>scm:git:git@github.com:Marthym/juery.git</developerConnection>
         <url>https://github.com/Marthym/juery</url>
-        <tag>1.4.1</tag>
+        <tag>1.4.2</tag>
     </scm>
 
     <modules>
@@ -58,7 +58,7 @@
         <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
         <maven-surefire-plugin.version>3.2.2</maven-surefire-plugin.version>
         <mongodb-driver.version>4.9.0</mongodb-driver.version>
-        <nexus-staging-maven-plugin.version>1.6.13</nexus-staging-maven-plugin.version>
+        <nexus-staging-maven-plugin.version>1.7.0</nexus-staging-maven-plugin.version>
 
         <surefire.argline.opens />
     </properties>
