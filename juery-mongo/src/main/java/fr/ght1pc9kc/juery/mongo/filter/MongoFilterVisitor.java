@@ -1,4 +1,4 @@
-package fr.ght1pc9kc.juery.mongo;
+package fr.ght1pc9kc.juery.mongo.filter;
 
 import com.mongodb.client.model.Filters;
 import fr.ght1pc9kc.juery.api.filter.AndOperation;
@@ -15,9 +15,10 @@ import fr.ght1pc9kc.juery.api.filter.NoCriterion;
 import fr.ght1pc9kc.juery.api.filter.NotOperation;
 import fr.ght1pc9kc.juery.api.filter.OrOperation;
 import fr.ght1pc9kc.juery.api.filter.StartWithOperation;
+import fr.ght1pc9kc.juery.mongo.MongoFilterOptions;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
@@ -25,43 +26,45 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Convert a {@link fr.ght1pc9kc.juery.api.Criteria} into a Mongo filter query
  */
 public class MongoFilterVisitor implements CriteriaVisitor<Bson> {
-    private static final MongoFilterVisitor DEFAULT_INSTANCE = new MongoFilterVisitor(Set.of(), null);
+    private static final MongoFilterVisitor DEFAULT_INSTANCE = new MongoFilterVisitor(Set.of(), Map.of(), MongoFilterOptions.DEFAULT_OPTIONS);
 
     private final Set<String> objectIdFields;
-    private final @Nullable Map<String, String> propertiesMapping;
+    private final Map<String, String> propertiesMapping;
+    private final boolean useDefaultValues;
 
     /**
      * Create a new MongoFilterVisitor
      *
      * @param objectIdFields    A Set of mongo properties that must be considered as Mongo {@link ObjectId}
      * @param propertiesMapping A properties mapping from query property name to Mongo database field name
+     * @param options           An options list as an integer bit array {@see MongoFilterOptions}
      */
-    private MongoFilterVisitor(Collection<String> objectIdFields, @Nullable Map<String, String> propertiesMapping) {
-        this.objectIdFields = Set.copyOf(objectIdFields);
-        this.propertiesMapping = nonNull(propertiesMapping) ? Map.copyOf(propertiesMapping) : null;
+    private MongoFilterVisitor(@NotNull Collection<String> objectIdFields, @NotNull Map<String, String> propertiesMapping, int options) {
+        this.objectIdFields = Set.copyOf(requireNonNull(objectIdFields));
+        this.propertiesMapping = Map.copyOf(requireNonNull(propertiesMapping));
+        this.useDefaultValues = (options & MongoFilterOptions.USE_DEFAULT_VALUES) == MongoFilterOptions.USE_DEFAULT_VALUES;
     }
 
     public static MongoFilterVisitor getMongoFilter() {
         return DEFAULT_INSTANCE;
     }
 
-    public static MongoFilterVisitor getMongoFilter(Collection<String> objectIdFields, Map<String, String> propertiesMapping) {
-        return new MongoFilterVisitor(objectIdFields, propertiesMapping);
+    public static MongoFilterVisitor getMongoFilter(Collection<String> objectIdFields, Map<String, String> propertiesMapping, int options) {
+        return new MongoFilterVisitor(objectIdFields, propertiesMapping, options);
     }
 
     public static MongoFilterVisitor getMongoFilter(Collection<String> objectIdFields) {
-        return new MongoFilterVisitor(objectIdFields, Map.of());
+        return new MongoFilterVisitor(objectIdFields, Map.of(), MongoFilterOptions.DEFAULT_OPTIONS);
     }
 
-    public static MongoFilterVisitor getMongoFilter(Map<String, String> propertiesMapping) {
-        return new MongoFilterVisitor(Set.of(), propertiesMapping);
+    public static MongoFilterVisitor getMongoFilter(Map<String, String> propertiesMapping, int options) {
+        return new MongoFilterVisitor(Set.of(), propertiesMapping, options);
     }
 
     @Override
@@ -106,7 +109,9 @@ public class MongoFilterVisitor implements CriteriaVisitor<Bson> {
 
     @Override
     public <T> Bson visitEqual(EqualOperation<T> operation) {
-        String mappedProperty = (isNull(propertiesMapping)) ? operation.field.property : propertiesMapping.get(operation.field.property);
+        String mappedProperty = useDefaultValues
+                ? propertiesMapping.getOrDefault(operation.field.property, operation.field.property)
+                : propertiesMapping.get(operation.field.property);
         if (mappedProperty == null) {
             return Filters.empty();
 
@@ -120,7 +125,9 @@ public class MongoFilterVisitor implements CriteriaVisitor<Bson> {
 
     @Override
     public <T> Bson visitGreaterThan(GreaterThanOperation<T> operation) {
-        String mappedProperty = (isNull(propertiesMapping)) ? operation.field.property : propertiesMapping.get(operation.field.property);
+        String mappedProperty = useDefaultValues
+                ? propertiesMapping.getOrDefault(operation.field.property, operation.field.property)
+                : propertiesMapping.get(operation.field.property);
         if (mappedProperty == null) {
             return Filters.empty();
 
@@ -132,7 +139,9 @@ public class MongoFilterVisitor implements CriteriaVisitor<Bson> {
 
     @Override
     public <T> Bson visitGreaterThanEquals(GreaterThanEqualsOperation<T> operation) {
-        String mappedProperty = (isNull(propertiesMapping)) ? operation.field.property : propertiesMapping.get(operation.field.property);
+        String mappedProperty = useDefaultValues
+                ? propertiesMapping.getOrDefault(operation.field.property, operation.field.property)
+                : propertiesMapping.get(operation.field.property);
         if (mappedProperty == null) {
             return Filters.empty();
 
@@ -144,7 +153,9 @@ public class MongoFilterVisitor implements CriteriaVisitor<Bson> {
 
     @Override
     public <T> Bson visitLowerThan(LowerThanOperation<T> operation) {
-        String mappedProperty = (isNull(propertiesMapping)) ? operation.field.property : propertiesMapping.get(operation.field.property);
+        String mappedProperty = useDefaultValues
+                ? propertiesMapping.getOrDefault(operation.field.property, operation.field.property)
+                : propertiesMapping.get(operation.field.property);
         if (mappedProperty == null) {
             return Filters.empty();
 
@@ -156,7 +167,9 @@ public class MongoFilterVisitor implements CriteriaVisitor<Bson> {
 
     @Override
     public <T> Bson visitLowerThanEquals(LowerThanEqualsOperation<T> operation) {
-        String mappedProperty = (isNull(propertiesMapping)) ? operation.field.property : propertiesMapping.get(operation.field.property);
+        String mappedProperty = useDefaultValues
+                ? propertiesMapping.getOrDefault(operation.field.property, operation.field.property)
+                : propertiesMapping.get(operation.field.property);
         if (mappedProperty == null) {
             return Filters.empty();
 
@@ -168,7 +181,9 @@ public class MongoFilterVisitor implements CriteriaVisitor<Bson> {
 
     @Override
     public <T> Bson visitIn(InOperation<T> operation) {
-        String mappedProperty = (isNull(propertiesMapping)) ? operation.field.property : propertiesMapping.get(operation.field.property);
+        String mappedProperty = useDefaultValues
+                ? propertiesMapping.getOrDefault(operation.field.property, operation.field.property)
+                : propertiesMapping.get(operation.field.property);
         if (mappedProperty == null) {
             return Filters.empty();
 
@@ -183,7 +198,9 @@ public class MongoFilterVisitor implements CriteriaVisitor<Bson> {
 
     @Override
     public <T> Bson visitStartWith(StartWithOperation<T> operation) {
-        String mappedProperty = (isNull(propertiesMapping)) ? operation.field.property : propertiesMapping.get(operation.field.property);
+        String mappedProperty = useDefaultValues
+                ? propertiesMapping.getOrDefault(operation.field.property, operation.field.property)
+                : propertiesMapping.get(operation.field.property);
         if (mappedProperty == null) {
             return Filters.empty();
 
@@ -196,7 +213,9 @@ public class MongoFilterVisitor implements CriteriaVisitor<Bson> {
 
     @Override
     public <T> Bson visitEndWith(EndWithOperation<T> operation) {
-        String mappedProperty = (isNull(propertiesMapping)) ? operation.field.property : propertiesMapping.get(operation.field.property);
+        String mappedProperty = useDefaultValues
+                ? propertiesMapping.getOrDefault(operation.field.property, operation.field.property)
+                : propertiesMapping.get(operation.field.property);
         if (mappedProperty == null) {
             return Filters.empty();
 
@@ -209,7 +228,9 @@ public class MongoFilterVisitor implements CriteriaVisitor<Bson> {
 
     @Override
     public <T> Bson visitContains(ContainsOperation<T> operation) {
-        String mappedProperty = (isNull(propertiesMapping)) ? operation.field.property : propertiesMapping.get(operation.field.property);
+        String mappedProperty = useDefaultValues
+                ? propertiesMapping.getOrDefault(operation.field.property, operation.field.property)
+                : propertiesMapping.get(operation.field.property);
         if (mappedProperty == null) {
             return Filters.empty();
 

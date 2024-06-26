@@ -7,4 +7,6 @@ module juery.mongo {
     requires org.mongodb.driver.core;
 
     exports fr.ght1pc9kc.juery.mongo;
+    exports fr.ght1pc9kc.juery.mongo.filter;
+    exports fr.ght1pc9kc.juery.mongo.pagination;
 }
