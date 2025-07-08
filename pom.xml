@@ -378,16 +378,9 @@
                         <extensions>true</extensions>
                         <configuration>
                             <publishingServerId>ossrh</publishingServerId>
+                            <autoPublish>true</autoPublish>
+                            <waitUntil>published</waitUntil>
                         </configuration>
-                        <executions>
-                            <execution>
-                                <id>default-deploy</id>
-                                <phase>deploy</phase>
-                                <goals>
-                                    <goal>deploy</goal>
-                                </goals>
-                            </execution>
-                        </executions>
                     </plugin>
                 </plugins>
             </build>
