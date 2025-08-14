@@ -70,6 +70,19 @@ public interface QueryStringParser {
     PageRequest parse(String queryString);
 
     /**
+     * Parse a Record form data object into {@link PageRequest}.
+     * <p>The record must contain only fields allow by the {@link ParserConfiguration}.
+     * Others fields are considered as property filters.</p>
+     * <p>The type of the fields must be correct according to the {@link ParserConfiguration} ({@link Integer} or {@link String}.
+     * The type for property filters are {@link String} or {@link java.util.Collection} of {@link String}</p>
+     * <p>All accessibles methods without argument are considerate except {@link Record#toString()} and {@link Record#hashCode()} ()}</p>
+     *
+     * @param form The form data as a record object
+     * @return The PageRequest
+     */
+    <R extends Record> PageRequest parse(R form);
+
+    /**
      * Parse querystring parameter into a {@link Criteria}.
      *
      * @param key        The querystring to parse

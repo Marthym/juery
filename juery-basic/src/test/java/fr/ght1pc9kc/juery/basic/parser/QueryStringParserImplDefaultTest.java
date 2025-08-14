@@ -8,11 +8,13 @@ import fr.ght1pc9kc.juery.api.pagination.Order;
 import fr.ght1pc9kc.juery.api.pagination.Sort;
 import fr.ght1pc9kc.juery.basic.QueryStringParser;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -204,5 +206,43 @@ class QueryStringParserImplDefaultTest {
 
     public static Set<String> assertableQueryString(String queryString) {
         return Set.of(queryString.split("&"));
+    }
+
+    @Test
+    void should_parse_record_as_page_request() {
+        record MyRecord(
+                Integer _p,
+                Integer _pp,
+                Integer _from,
+                Integer _to,
+                String _s,
+                Collection<String> _id,
+                String name
+        ) {
+        }
+        {
+            MyRecord sample = new MyRecord(1, 10, null, null, "name,-email", List.of("42", "24"), "^Obiwan");
+
+            Assertions.assertThat(tested.parse(sample))
+                    .isEqualTo(PageRequest.of(
+                            Pagination.of(10, 10, Sort.of(
+                                    new Order(Direction.ASC, "name"),
+                                    new Order(Direction.DESC, "email"))),
+                            Criteria.property("_id").in(42, 24)
+                                    .and(Criteria.property("name").startWith("Obiwan"))
+                    ));
+        }
+        {
+            MyRecord sample = new MyRecord(null, null, 101, 151, "name,-email", List.of("42", "24"), "∋Obiwan");
+
+            Assertions.assertThat(tested.parse(sample))
+                    .isEqualTo(PageRequest.of(
+                            Pagination.of(101, 50, Sort.of(
+                                    new Order(Direction.ASC, "name"),
+                                    new Order(Direction.DESC, "email"))),
+                            Criteria.property("_id").in(42, 24)
+                                    .and(Criteria.property("name").contains("Obiwan"))
+                    ));
+        }
     }
 }

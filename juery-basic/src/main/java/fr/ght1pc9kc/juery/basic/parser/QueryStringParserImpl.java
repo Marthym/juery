@@ -16,13 +16,19 @@ import fr.ght1pc9kc.juery.basic.filter.QueryStringFilterVisitor;
 import fr.ght1pc9kc.juery.basic.utils.TemporalUtils;
 import lombok.RequiredArgsConstructor;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -40,6 +46,7 @@ import static java.util.function.Predicate.not;
 public final class QueryStringParserImpl implements QueryStringParser {
     private static final int PAGE_START_INDEX = 0;
     private static final QueryStringFilterVisitor CRITERIA_FORMATTER = new QueryStringFilterVisitor();
+    private static final Set<String> EXCLUDED_FILTER_PARAMETERS = Set.of("equals", "toString", "hashCode", "getClass");
 
     private final ParserConfiguration config;
 
@@ -58,7 +65,7 @@ public final class QueryStringParserImpl implements QueryStringParser {
         if (!pr.filter().isEmpty()) {
             qs.append(pr.filter().accept(CRITERIA_FORMATTER));
         }
-        if (qs.length() == 0) {
+        if (qs.isEmpty()) {
             return "";
         }
         var c = qs.charAt(qs.length() - 1);
@@ -106,6 +113,31 @@ public final class QueryStringParserImpl implements QueryStringParser {
         return parse(queryStringToMap(queryString));
     }
 
+    public <R extends Record> PageRequest parse(R form) {
+        Map<String, List<String>> map = new HashMap<>();
+        Method[] declaredMethods = form.getClass().getDeclaredMethods();
+
+        Stream.of(declaredMethods)
+                .filter(not(m -> EXCLUDED_FILTER_PARAMETERS.contains(m.getName())))
+                .filter(m -> m.getParameterCount() == 0 && !Modifier.isStatic(m.getModifiers())
+                        && m.canAccess(form))
+                .forEach(m -> {
+                    try {
+                        Optional.ofNullable(m.invoke(form))
+                                .ifPresent(v -> {
+                                    if (v instanceof Collection<?> collValue) {
+                                        map.put(m.getName(), collValue.stream().map(Object::toString).toList());
+                                    } else {
+                                        map.put(m.getName(), List.of(v.toString()));
+                                    }
+                                });
+                    } catch (InvocationTargetException | IllegalAccessException e) {
+                        // do nothing
+                    }
+                });
+        return parse(map);
+    }
+
     @Override
     public Criteria parseCriterionParameter(String key, List<String> paramValue) {
         if (paramValue == null || paramValue.isEmpty()) {
@@ -121,44 +153,43 @@ public final class QueryStringParserImpl implements QueryStringParser {
             return Criteria.property(key).in(filteredListValues);
         }
 
-        String strValue = paramValue.get(0);
+        String strValue = paramValue.getFirst();
 
         // Parse operation
         BiFunction<CriterionProperty, Object, Criteria> operation = CriterionProperty::eq;
-        Object typedValue = null;
+        Object typedValue;
         if (!StringUtils.isBlank(strValue)) {
-            switch (strValue.charAt(0)) {
-                case QS_START_CHAR:
+            typedValue = switch (strValue.charAt(0)) {
+                case QS_START_CHAR -> {
                     operation = CriterionProperty::startWith;
-                    typedValue = parseValueType(strValue.substring(1));
-                    break;
-                case QS_END_CHAR:
+                    yield parseValueType(strValue.substring(1));
+                }
+                case QS_END_CHAR -> {
                     operation = CriterionProperty::endWith;
-                    typedValue = parseValueType(strValue.substring(1));
-                    break;
-                case QS_CONTAINS_CHAR:
+                    yield parseValueType(strValue.substring(1));
+                }
+                case QS_CONTAINS_CHAR -> {
                     operation = CriterionProperty::contains;
-                    typedValue = strValue.substring(1);
-                    break;
-                case QS_LT_CHAR:
+                    yield strValue.substring(1);
+                }
+                case QS_LT_CHAR -> {
                     operation = CriterionProperty::lt;
-                    typedValue = parseValueType(strValue.substring(1));
-                    break;
-                case QS_GT_CHAR:
+                    yield parseValueType(strValue.substring(1));
+                }
+                case QS_GT_CHAR -> {
                     operation = CriterionProperty::gt;
-                    typedValue = parseValueType(strValue.substring(1));
-                    break;
-                case QS_LTE_CHAR:
+                    yield parseValueType(strValue.substring(1));
+                }
+                case QS_LTE_CHAR -> {
                     operation = CriterionProperty::lte;
-                    typedValue = parseValueType(strValue.substring(1));
-                    break;
-                case QS_GTE_CHAR:
+                    yield parseValueType(strValue.substring(1));
+                }
+                case QS_GTE_CHAR -> {
                     operation = CriterionProperty::gte;
-                    typedValue = parseValueType(strValue.substring(1));
-                    break;
-                default:
-                    typedValue = parseValueType(strValue);
-            }
+                    yield parseValueType(strValue.substring(1));
+                }
+                default -> parseValueType(strValue);
+            };
         } else {
             typedValue = parseValueType(strValue);
         }
@@ -168,12 +199,12 @@ public final class QueryStringParserImpl implements QueryStringParser {
 
     private Pagination parsePaginationByPage(Map<String, List<String>> queryString) {
         int page = Optional.ofNullable(queryString.get(config.pageParameter()))
-                .flatMap(l -> Optional.ofNullable(l.get(0)))
+                .flatMap(l -> Optional.ofNullable(l.getFirst()))
                 .map(Integer::parseInt)
                 .orElse(0);
 
         int size = Optional.ofNullable(queryString.get(config.sizeParameter()))
-                .flatMap(l -> Optional.ofNullable(l.get(0)))
+                .flatMap(l -> Optional.ofNullable(l.getFirst()))
                 .map(Integer::parseInt)
                 .map(i -> Math.min(i, config.maxPageSize()))
                 .orElse(config.maxPageSize());
@@ -187,18 +218,18 @@ public final class QueryStringParserImpl implements QueryStringParser {
 
     private Pagination parsePaginationByOffset(Map<String, List<String>> queryString) {
         int offset = Optional.ofNullable(queryString.get(config.fromParameter()))
-                .flatMap(l -> Optional.ofNullable(l.get(0)))
+                .flatMap(l -> Optional.ofNullable(l.getFirst()))
                 .map(Integer::parseInt)
                 .orElse(PAGE_START_INDEX);
 
         int maxTo = offset + config.maxPageSize() - 1;
 
         int size = Optional.ofNullable(queryString.get(config.sizeParameter()))
-                .flatMap(l -> Optional.ofNullable(l.get(0)))
+                .flatMap(l -> Optional.ofNullable(l.getFirst()))
                 .map(Integer::parseInt)
                 .map(i -> Math.min(i, config.maxPageSize()))
                 .orElseGet(() -> Optional.ofNullable(queryString.get(config.toParameter()))
-                        .flatMap(l -> Optional.ofNullable(l.get(0)))
+                        .flatMap(l -> Optional.ofNullable(l.getFirst()))
                         .map(Integer::parseInt)
                         .map(i -> Math.min(i, maxTo))
                         .filter(i -> i > offset)
