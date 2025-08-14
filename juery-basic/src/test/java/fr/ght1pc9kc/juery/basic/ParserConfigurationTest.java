@@ -18,6 +18,7 @@ class ParserConfigurationTest {
         Assertions.assertThat(actual.excludeFilterParameters()).isEqualTo(Set.of(
                 "_p", "_pp", "_s", "_from", "_to"
         ));
+        
     }
 
     @Test

@@ -16,13 +16,18 @@ import fr.ght1pc9kc.juery.basic.filter.QueryStringFilterVisitor;
 import fr.ght1pc9kc.juery.basic.utils.TemporalUtils;
 import lombok.RequiredArgsConstructor;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -40,6 +45,7 @@ import static java.util.function.Predicate.not;
 public final class QueryStringParserImpl implements QueryStringParser {
     private static final int PAGE_START_INDEX = 0;
     private static final QueryStringFilterVisitor CRITERIA_FORMATTER = new QueryStringFilterVisitor();
+    private static final Set<String> EXCLUDED_FILTER_PARAMETERS = Set.of("equals", "toString", "hashCode", "getClass");
 
     private final ParserConfiguration config;
 
@@ -58,7 +64,7 @@ public final class QueryStringParserImpl implements QueryStringParser {
         if (!pr.filter().isEmpty()) {
             qs.append(pr.filter().accept(CRITERIA_FORMATTER));
         }
-        if (qs.length() == 0) {
+        if (qs.isEmpty()) {
             return "";
         }
         var c = qs.charAt(qs.length() - 1);
@@ -104,6 +110,30 @@ public final class QueryStringParserImpl implements QueryStringParser {
     @Override
     public PageRequest parse(String queryString) {
         return parse(queryStringToMap(queryString));
+    }
+
+    public <R extends Record> PageRequest parse(R form) {
+        Map<String, List<String>> map = new HashMap<>();
+        Method[] declaredMethods = form.getClass().getDeclaredMethods();
+
+        Stream.of(declaredMethods)
+                .filter(not(m -> EXCLUDED_FILTER_PARAMETERS.contains(m.getName())))
+                .filter(m -> m.canAccess(form) && m.getParameterCount() == 0)
+                .forEach(m -> {
+                    try {
+                        Optional.ofNullable(m.invoke(form))
+                                .ifPresent(v -> {
+                                    if (v instanceof Collection<?> collValue) {
+                                        map.put(m.getName(), collValue.stream().map(Object::toString).toList());
+                                    } else {
+                                        map.put(m.getName(), List.of(v.toString()));
+                                    }
+                                });
+                    } catch (InvocationTargetException | IllegalAccessException e) {
+                        // do nothing
+                    }
+                });
+        return parse(map);
     }
 
     @Override
